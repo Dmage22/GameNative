@@ -1,5 +1,12 @@
 package app.gamenative.wrapper
 
+import android.graphics.BitmapFactory
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +42,24 @@ fun WrapperHomeScreen() {
     val preset = remember { WrapperPresetLoader.load(context) }
     var editingConfig by remember { mutableStateOf<File?>(null) }
 
+    val background = remember(preset) {
+        preset?.background?.takeIf { it.isNotEmpty() }?.let { name ->
+            runCatching {
+                context.assets.open("wrapper/$name").use { BitmapFactory.decodeStream(it) }?.asImageBitmap()
+            }.getOrNull()
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    if (background != null) {
+        Image(
+            bitmap = background,
+            contentDescription = null,
+            contentScale = ContentScale.Fit,
+            alpha = 0.35f,
+            modifier = Modifier.fillMaxSize(),
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -85,7 +110,7 @@ fun WrapperHomeScreen() {
             add("Setup" to { SnackbarManager.show("Coming soon") })
             add("Controls" to openControls)
             add("GPU" to { SnackbarManager.show("Coming soon") })
-            add("Resolution" to { SnackbarManager.show("Coming soon") })
+            add("Display" to { SnackbarManager.show("Coming soon") })
             if (preset.configFile.isNotEmpty()) {
                 add(preset.configFile to { editingConfig = File(gameDir, preset.configFile) })
             }
@@ -102,6 +127,8 @@ fun WrapperHomeScreen() {
                 if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
             }
         }
+    }
+
     }
 
     editingConfig?.let { file ->

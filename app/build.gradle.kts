@@ -191,6 +191,12 @@ android {
             signingConfig = signingConfigs.getByName("debug")
             applicationIdSuffix = ".wrapper"
             buildConfigField("boolean", "WRAPPER", "true")
+            manifestPlaceholders.putAll(
+                mapOf(
+                    "icon" to "@mipmap/ic_launcher_wrapper",
+                    "roundIcon" to "@mipmap/ic_launcher_wrapper",
+                ),
+            )
         }
         create("release-gold") {
             isMinifyEnabled = true

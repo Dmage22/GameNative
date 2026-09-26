@@ -18,6 +18,7 @@ data class WrapperPreset(
     val registry: List<WrapperRegistryValue> = emptyList(),
     val controlsProfile: String = "",
     val configFile: String = "",
+    val background: String = "",
 )
 
 @Serializable
