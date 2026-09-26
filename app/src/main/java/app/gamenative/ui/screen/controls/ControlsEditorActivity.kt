@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowInsetsController
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -23,6 +22,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import app.gamenative.ui.component.dialog.ElementEditorDialog
 import app.gamenative.ui.screen.xserver.EditModeToolbar
 import app.gamenative.ui.theme.PluviaTheme
+import app.gamenative.ui.util.SnackbarManager
 import com.winlator.inputcontrols.ControlElement
 import com.winlator.inputcontrols.InputControlsManager
 import com.winlator.widget.InputControlsView
@@ -69,7 +69,7 @@ class ControlsEditorActivity : ComponentActivity() {
         val profileId = intent.getIntExtra(EXTRA_PROFILE_ID, -1)
         val profile = InputControlsManager(this).getProfile(profileId)
         if (profile == null) {
-            Toast.makeText(this, "Profile not found", Toast.LENGTH_SHORT).show()
+            SnackbarManager.show("Profile not found")
             finish()
             return
         }
