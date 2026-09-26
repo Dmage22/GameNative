@@ -60,3 +60,17 @@ editor, since the game folder may be app-private) · Controls.
 - Per-GPU driver selection: the bundled Turnip T30 is only verified on Adreno 840 (Galaxy Z Fold 7).
   Other Adreno -> system Qualcomm driver or another Turnip build; Mali/Xclipse -> system driver via
   Wrapper-gamenative. Testing is on the Fold 7 only for now.
+
+## Multi-client (later phase, user design)
+- Rules: MapleLegends allows several clients open at once, but controlling several at once is botting.
+  Input only ever goes to the one client in front; no broadcast, no per-client automation.
+- No Wine desktop ever shown. All clients run in the same container/Wine session.
+- UI: a vertical tab bar on either screen edge (Tab 1, 2, 3 ... + "next tab" button, "+" to start another
+  client). A tab brings that client's window to the front, full screen. Later: optional 2x2 grid view, max 4.
+- Existing hooks (com.winlator.winhandler.WinHandler, talks to winhandler.exe inside Wine):
+  `exec(cmd)` to start another client, `listProcesses()` (pid, name, memoryUsage per process),
+  `bringToFront(processName, hwnd)`. Missing: a way to list window handles per pid, since all clients
+  share one process name -> extend winhandler.exe with a "list windows" request.
+- Grid view idea: run the virtual desktop at 2x the client size with each client window in a fixed
+  quadrant; the tab view zooms the renderer onto one quadrant, the grid view shows the whole desktop.
+  Touch coordinates must be mapped to the zoomed quadrant.
