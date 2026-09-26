@@ -78,7 +78,11 @@ editor, since the game folder may be app-private) · Controls.
 ## In-game side column (replaces GameNative's quick menu + drag-out side panel in the wrapper)
 - The back key / drag-out panel no longer open GameNative's Quick Menu; users never see it.
 - One slim column at the very LEFT edge, split in half:
-  - Top half, tools: Edit on-screen controls, show/hide on-screen controls, Keyboard (chat), FPS limiter,
-    Exit game. (Candidates to keep from the Quick Menu; everything else stays hidden.)
-  - Bottom half, clients: Tab 1..N, "next tab", "+" start another client (max 4).
-- Collapsible to a thin handle so it doesn't cover the game.
+  - Top half, clients: Tab 1..N, "next tab", "+" start another client (max 4).
+  - Bottom half, tools: Edit on-screen controls, show/hide on-screen controls (also for clean
+    screenshots), Keyboard (chat), Exit game.
+- FPS limiter moves to the home screen's GPU section instead.
+- Physical input: GameNative already auto-hides the on-screen controls ONCE per session when an external
+  keyboard, a captured mouse, or a game controller is detected (XServerScreen.evaluateDevice ->
+  hideInputControls; flag hasUpdatedScreenGamepad). They don't come back on unplug - the show/hide tool
+  covers that. Keep this behaviour.
