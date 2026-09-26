@@ -68,6 +68,7 @@ android {
         versionName = "1.2.1"
 
         buildConfigField("boolean", "GOLD", "false")
+        buildConfigField("boolean", "WRAPPER", "false")
         fun secret(name: String) =
             project.findProperty(name) as String? ?: System.getenv(name) ?: ""
 
@@ -183,6 +184,13 @@ android {
             isShrinkResources = false
             signingConfig = signingConfigs.getByName("debug")
             applicationIdSuffix = ".controlsdev"
+        }
+        create("wrapper") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("debug")
+            applicationIdSuffix = ".wrapper"
+            buildConfigField("boolean", "WRAPPER", "true")
         }
         create("release-gold") {
             isMinifyEnabled = true

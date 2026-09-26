@@ -107,6 +107,7 @@ import app.gamenative.ui.screen.login.UserLoginScreen
 import app.gamenative.ui.screen.settings.SettingsScreen
 import app.gamenative.ui.screen.xserver.XServerScreen
 import app.gamenative.ui.theme.PluviaTheme
+import app.gamenative.wrapper.WrapperHomeScreen
 import app.gamenative.ui.util.LocalSnackbarHostController
 import app.gamenative.ui.util.SnackbarManager
 import app.gamenative.utils.BestConfigService
@@ -1626,6 +1627,7 @@ fun PluviaMain(
 
             val startDestination = rememberSaveable {
                 when {
+                    BuildConfig.WRAPPER -> PluviaScreen.Wrapper.route
                     SteamService.isLoggedIn -> PluviaScreen.Home.route + "?offline=false"
                     // skip login screen if any service has stored credentials
                     SteamUtils.hasStoredCredentials() ||
@@ -1641,6 +1643,12 @@ fun PluviaMain(
                 navController = navController,
                 startDestination = startDestination,
             ) {
+                /** Wrapper home **/
+                composable(route = PluviaScreen.Wrapper.route) {
+                    WrapperHomeScreen(
+                        onOpenSettings = { navController.navigate(PluviaScreen.Settings.route) },
+                    )
+                }
                 /** Login **/
                 composable(route = PluviaScreen.LoginUser.route) {
                     UserLoginScreen(

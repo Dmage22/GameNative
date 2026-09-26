@@ -37,6 +37,9 @@ android {
         create("controlsdev") {
             initWith(getByName("release"))
         }
+        create("wrapper") {
+            initWith(getByName("release"))
+        }
     }
 
     compileOptions {
