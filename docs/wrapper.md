@@ -68,7 +68,7 @@ editor, since the game folder may be app-private) · Controls.
   (id, drives, installPath, session stats, controls profile id) and FEX_SILENTLOG dropped.
 - `fexcore-preset.json`: the FEX preset the container used (user's "D2R" preset: TSO+vector TSO,
   multiblock, MAXINST 5000, small TSC scale, SMC mtrack, volatile metadata, mono hacks).
-- Components to bundle: proton-11.0-2-arm64ec-6, FEXCore 2609-maple1, DXVK 2.7.1-1-gplasync,
+- Components to bundle: proton-11.0-2-arm64ec-7 (adds 1366x768 to the mode list), FEXCore 2609-maple1, DXVK 2.7.1-1-gplasync,
   graphics driver "Wrapper" + Turnip Adreno T30 (@Mr_Purple_666).
 
 ## TODO before publishing

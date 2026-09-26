@@ -33,35 +33,22 @@ fun WrapperDisplayDialog(defaultSize: String, onDismiss: () -> Unit) {
         text = {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 WrapperSettings.SCREEN_SIZES.forEach { size ->
-                    val pending = size == WrapperSettings.PENDING_SIZE
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
                             selected = selected == size,
-                            onClick = if (pending) null else {
-                                {
-                                    selected = size
-                                    WrapperSettings.setScreenSize(context, size)
-                                }
+                            onClick = {
+                                selected = size
+                                WrapperSettings.setScreenSize(context, size)
                             },
-                            enabled = !pending,
                         )
-                        Column {
-                            Text(text = size.replace("x", " x "), style = MaterialTheme.typography.bodyLarge)
-                            if (pending) {
-                                Text(
-                                    text = "Coming with a Wine update",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                )
-                            }
-                        }
+                        Text(text = size.replace("x", " x "), style = MaterialTheme.typography.bodyLarge)
                     }
                 }
                 Text(
-                    text = "The game's own resolution must not be larger than this.",
+                    text = "The game only sees resolutions that fit inside this size. To use 1366 x 768 in the game, pick 1366 x 768 or larger here.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = 12.dp),

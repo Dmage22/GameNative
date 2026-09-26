@@ -85,5 +85,5 @@
   "unpackFiles": false,
   "suspendPolicy": "never",
   "portraitMode": false,
-  "wineVersion": "proton-11.0-2-arm64ec-6-1"
+  "wineVersion": "proton-11.0-2-arm64ec-7-1"
 }

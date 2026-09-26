@@ -17,7 +17,6 @@ object WrapperSettings {
     val SCREEN_SIZES = listOf("800x600", "1024x768", "1280x720", "1280x1024", "1366x768", "1600x900", "1920x1080")
 
     /** Needs a Wine update; shown but disabled. */
-    const val PENDING_SIZE = "1366x768"
 
     private fun prefs(context: Context) = context.getSharedPreferences(FILE, Context.MODE_PRIVATE)
 
