@@ -63,6 +63,10 @@ jobs:
 
     - name: Extract universal APK
       run: |
+        mkdir -p ~/.android
+        [ -f ~/.android/debug.keystore ] || keytool -genkeypair -keystore ~/.android/debug.keystore \
+          -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 \
+          -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
         java -Xmx3g -jar tools/bundletool-all-1.17.2.jar build-apks \
           --bundle=app/build/outputs/bundle/legacyControlsdev/app-legacy-controlsdev.aab \
           --output=controlsdev.apks --mode=universal \
