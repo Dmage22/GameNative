@@ -39,6 +39,8 @@ fun WrapperHomeScreen() {
     val context = LocalContext.current
     val preset = remember { WrapperPresetLoader.load(context) }
     var editingConfig by remember { mutableStateOf<File?>(null) }
+    var showGpu by remember { mutableStateOf(false) }
+    var showDisplay by remember { mutableStateOf(false) }
 
     val background = remember(preset) {
         preset?.background?.takeIf { it.isNotEmpty() }?.let { name ->
@@ -105,8 +107,8 @@ fun WrapperHomeScreen() {
         val smallButtons = buildList<Pair<String, () -> Unit>> {
             add("Setup" to { SnackbarManager.show("Coming soon") })
             add("Controls" to openControls)
-            add("GPU" to { SnackbarManager.show("Coming soon") })
-            add("Display" to { SnackbarManager.show("Coming soon") })
+            add("GPU" to { showGpu = true })
+            add("Display" to { showDisplay = true })
             if (preset.configFile.isNotEmpty()) {
                 add(preset.configFile to { editingConfig = File(gameDir, preset.configFile) })
             }
@@ -135,6 +137,16 @@ fun WrapperHomeScreen() {
 
     editingConfig?.let { file ->
         ConfigFileEditorDialog(file = file, onDismiss = { editingConfig = null })
+    }
+
+    if (showGpu) {
+        WrapperGpuDialog(onDismiss = { showGpu = false })
+    }
+    if (showDisplay) {
+        WrapperDisplayDialog(
+            defaultSize = preset.screenSize.ifEmpty { "1280x1024" },
+            onDismiss = { showDisplay = false },
+        )
     }
 }
 
