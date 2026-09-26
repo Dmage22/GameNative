@@ -15,8 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -50,52 +49,55 @@ fun WrapperHomeScreen() {
     }
 
     Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-    if (background != null) {
-        Image(
-            bitmap = background,
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-            alpha = 0.35f,
-            modifier = Modifier.fillMaxSize(),
-        )
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
+        if (background != null) {
+            Image(
+                bitmap = background,
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+                alpha = 0.35f,
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
+
         if (preset == null) {
             Text(
                 text = "Preset missing",
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center),
             )
-            return@Column
+            return@Box
         }
 
         val gameDir = remember(preset) { WrapperPaths.gameDir(context, preset) }
         val installed = File(gameDir, preset.install.exe).isFile
 
-        Text(
-            text = preset.name,
-            style = MaterialTheme.typography.headlineLarge,
-            textAlign = TextAlign.Center,
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = if (installed) "Ready" else "Game not installed",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-
-        WrapperButton(text = "Start game") {
-            SnackbarManager.show("Coming soon")
+        // Title and Start game hug the top, the other buttons hug the bottom, leaving the logo visible in between.
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = preset.name,
+                style = MaterialTheme.typography.headlineLarge,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                text = if (installed) "Ready" else "Game not installed",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { SnackbarManager.show("Coming soon") }) {
+                Text(
+                    text = "Start game",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                )
+            }
         }
-        Spacer(modifier = Modifier.height(16.dp))
 
         val openControls = {
             context.startActivity(ControlsProfilesActivity.intent(context))
@@ -109,40 +111,30 @@ fun WrapperHomeScreen() {
                 add(preset.configFile to { editingConfig = File(gameDir, preset.configFile) })
             }
         }
-        // Two buttons per row; a lone last button keeps the same width as the others.
-        smallButtons.chunked(2).forEach { row ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                row.forEach { (label, onClick) ->
-                    WrapperSmallButton(text = label, onClick = onClick, modifier = Modifier.weight(1f))
+        Column(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .widthIn(max = 640.dp)
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+        ) {
+            // Two buttons per row; a lone last button keeps the same width as the others.
+            smallButtons.chunked(2).forEach { row ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    row.forEach { (label, onClick) ->
+                        WrapperSmallButton(text = label, onClick = onClick, modifier = Modifier.weight(1f))
+                    }
+                    if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
                 }
-                if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
 
-    }
-
     editingConfig?.let { file ->
         ConfigFileEditorDialog(file = file, onDismiss = { editingConfig = null })
-    }
-}
-
-@Composable
-private fun WrapperButton(
-    text: String,
-    onClick: () -> Unit,
-) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .height(72.dp),
-    ) {
-        Text(text = text, style = MaterialTheme.typography.headlineSmall)
     }
 }
 
