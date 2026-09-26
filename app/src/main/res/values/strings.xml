@@ -1095,6 +1095,12 @@
     <string name="settings_performance_power_control_title">Power Control</string>
     <string name="settings_performance_power_control_subtitle">Enable in-game power control by default (enabled on tested devices: AYN Odin 3, Retroid Pocket 6/Nova)</string>
 
+    <!-- Settings: Controls Group -->
+    <string name="settings_controls_title">Controls</string>
+    <string name="settings_controls_import_profile">Import profile…</string>
+    <string name="settings_controls_export_all_profiles">Export all profiles…</string>
+    <string name="settings_controls_coming_soon">Coming soon</string>
+
     <!-- Settings: Emulation Group -->
     <string name="settings_emulation_title">Emulation</string>
     <string name="settings_accounts_title">Game launcher accounts</string>

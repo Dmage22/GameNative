@@ -150,6 +150,15 @@ private fun SettingsScreenContent(
                     SettingsGroupPerformance()
                 }
 
+                // Controls section
+                SettingsSection(
+                    title = stringResource(R.string.settings_controls_title),
+                    icon = Icons.Default.Gamepad,
+                    iconTint = PluviaTheme.colors.accentCyan,
+                ) {
+                    SettingsGroupControls()
+                }
+
                 // Interface section
                 SettingsSection(
                     title = stringResource(R.string.settings_interface_title),
