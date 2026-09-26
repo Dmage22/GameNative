@@ -3224,7 +3224,11 @@ internal fun EditModeToolbar(
     onDelete: () -> Unit,
     onSave: () -> Unit,
     onClose: () -> Unit,
-    onDuplicate: (Int) -> Unit
+    onDuplicate: (Int) -> Unit,
+    // Out-of-game editor: show which profile is being edited, and offer "Duplicate this profile"
+    // instead of "Copy from".
+    title: String? = null,
+    onDuplicateCurrent: (() -> Unit)? = null,
 ) {
     var duplicateProfileOpen by remember { mutableStateOf(false) }
     var toolbarOffsetX by remember { mutableStateOf(0f) }
@@ -3265,6 +3269,16 @@ internal fun EditModeToolbar(
                 modifier = Modifier.padding(end = 4.dp)
             )
 
+            if (title != null) {
+                Text(
+                    text = title,
+                    color = androidx.compose.ui.graphics.Color.White,
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
+            }
+
             // Add button
             TextButton(onClick = onAdd) {
                 Icon(Icons.Default.Add, contentDescription = "Add", tint = androidx.compose.ui.graphics.Color.White)
@@ -3286,6 +3300,13 @@ internal fun EditModeToolbar(
                 Text(stringResource(R.string.delete), color = androidx.compose.ui.graphics.Color.White)
             }
 
+            if (onDuplicateCurrent != null) {
+                TextButton(onClick = onDuplicateCurrent) {
+                    Icon(Icons.Filled.ContentCopy, contentDescription = "Duplicate", tint = androidx.compose.ui.graphics.Color.White)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(stringResource(R.string.controls_duplicate_profile), color = androidx.compose.ui.graphics.Color.White)
+                }
+            } else
             // Duplicate button with dropdown
             Box {
                 TextButton(onClick = { duplicateProfileOpen = !duplicateProfileOpen }) {

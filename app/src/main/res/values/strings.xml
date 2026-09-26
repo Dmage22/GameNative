@@ -1095,6 +1095,9 @@
     <string name="settings_performance_power_control_title">Power Control</string>
     <string name="settings_performance_power_control_subtitle">Enable in-game power control by default (enabled on tested devices: AYN Odin 3, Retroid Pocket 6/Nova)</string>
 
+    <string name="controls_duplicate_profile">Duplicate</string>
+    <string name="controls_editing_profile">Editing: %1$s</string>
+
     <!-- Settings: Controls Group -->
     <string name="settings_controls_title">Controls</string>
     <string name="settings_controls_import_profile">Import profile…</string>
