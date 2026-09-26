@@ -71,7 +71,8 @@ jobs:
         fetch() { curl -fsSL --retry 3 -o "$dir/$1" "$2"; ls -la "$dir/$1"; }
         fetch proton-11.0-2-arm64ec.wcp https://github.com/Dmage22/proton-wine/releases/download/proton-11.0-2-20260924-6/proton-11.0-2-arm64ec.wcp
         fetch fexcore-2609-maple1.wcp https://github.com/Dmage22/FEX-D2/releases/download/fexcore-2609-maple1-27/fexcore-2609-maple1.wcp
-        fetch dxvk-gplasync-2.7.1-1.wcp https://github.com/Arihany/WinlatorWCPHub/releases/download/DXVK-GPLASYNC/dxvk-gplasync-2.7.1-1.wcp
+        fetch dxvk-gplasync-2.7.1-1.wcp https://github.com/Dmage22/wrapper-components/releases/download/dxvk-gplasync-2.7.1-1/dxvk-gplasync-2.7.1-1.wcp
+        echo "e905591a6abd56d9a51f983c294a57cbde1698e4a9be943a5e05228c9768b127  $dir/dxvk-gplasync-2.7.1-1.wcp" | sha256sum -c -
         fetch turnip_mrpurple_T30-toasted.adpkg.zip https://github.com/MrPurple666/purple-turnip/releases/download/vturnip_mrpurple_T30-toasted.adpkg/turnip_mrpurple_T30-toasted.adpkg.zip
 
     - name: Build with Gradle
