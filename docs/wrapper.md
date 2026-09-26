@@ -25,6 +25,14 @@ The wrapper code is generic; everything game-specific lives in a **preset** unde
 }
 ```
 
+## Applying container.json
+Apply the exported file through Container's own JSON loading (Container.java reads every key, e.g.
+"displayRendererMode"), NOT only ContainerUtils.applyBestConfigMapToContainerData - that mapping covers a
+subset of keys and would silently leave displayRendererMode at the default "vulkan".
+MapleLegends preset uses displayRendererMode = "surfaceflinger" (ASurfaceRenderer: Android composites the
+X frames directly; lighter than the Vulkan renderer, but screen effects like sharpening/FSR only exist for
+the GL/Vulkan renderers).
+
 ## Flow
 1. First start (no login screen): `WrapperHomeScreen` shows the game name and status.
 2. **Import game**: user picks the downloaded package (or folder); the preset's installer
