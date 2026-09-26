@@ -26,6 +26,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -44,7 +46,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.gamenative.R
 import app.gamenative.ui.theme.PluviaTheme
-import app.gamenative.ui.util.SnackbarManager
 import com.winlator.inputcontrols.ControlsProfile
 import com.winlator.inputcontrols.InputControlsManager
 import kotlinx.coroutines.Dispatchers
@@ -95,6 +96,9 @@ private fun ControlsProfilesScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    // SnackbarManager is only displayed by the main screen, so this activity shows its own messages.
+    val snackbarHostState = remember { SnackbarHostState() }
+    val showMessage: (String) -> Unit = { message -> scope.launch { snackbarHostState.showSnackbar(message) } }
 
     var profiles by remember { mutableStateOf<List<ControlsProfile>>(emptyList()) }
     LaunchedEffect(refresh) {
@@ -118,9 +122,9 @@ private fun ControlsProfilesScreen(
                         val bytes = ControlsProfile.getProfileFile(context, profile.id).readBytes()
                         context.contentResolver.openOutputStream(uri)?.use { it.write(bytes) }
                     }
-                    SnackbarManager.show(context.getString(R.string.controls_profiles_exported, profile.name))
+                    showMessage(context.getString(R.string.controls_profiles_exported, profile.name))
                 } catch (e: Exception) {
-                    SnackbarManager.show(context.getString(R.string.controls_profiles_export_failed))
+                    showMessage(context.getString(R.string.controls_profiles_export_failed))
                 }
             }
         }
@@ -141,9 +145,9 @@ private fun ControlsProfilesScreen(
                     }
                 }
                 if (imported != null) {
-                    SnackbarManager.show(context.getString(R.string.controls_profiles_imported, imported.name))
+                    showMessage(context.getString(R.string.controls_profiles_imported, imported.name))
                 } else {
-                    SnackbarManager.show(context.getString(R.string.controls_profiles_import_failed))
+                    showMessage(context.getString(R.string.controls_profiles_import_failed))
                 }
                 onRefresh()
             }
@@ -151,6 +155,7 @@ private fun ControlsProfilesScreen(
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(text = stringResource(R.string.controls_profiles_title)) },
