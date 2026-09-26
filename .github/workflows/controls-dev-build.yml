@@ -48,14 +48,33 @@ jobs:
         fi
         yes | "$SDKMANAGER" --install "build-tools;34.0.0"
 
+    # Keep one debug key across runs so each test build can update the previous one in place.
+    - name: Restore debug keystore
+      uses: actions/cache@v4
+      with:
+        path: ~/.android/debug.keystore
+        key: controlsdev-debug-keystore
+
     - name: Build with Gradle
-      run: ./gradlew assembleControlsdev
+      run: ./gradlew :app:bundleLegacyControlsdev
+
+    - name: Stop Gradle daemons
+      run: ./gradlew --stop
+
+    - name: Extract universal APK
+      run: |
+        java -Xmx3g -jar tools/bundletool-all-1.17.2.jar build-apks \
+          --bundle=app/build/outputs/bundle/legacyControlsdev/app-legacy-controlsdev.aab \
+          --output=controlsdev.apks --mode=universal \
+          --ks="$HOME/.android/debug.keystore" --ks-pass=pass:android --ks-key-alias=androiddebugkey --key-pass=pass:android
+        unzip -p controlsdev.apks universal.apk > gamenative-controlsdev.apk
+        ls -lah gamenative-controlsdev.apk
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: gamenative-controlsdev
-        path: app/build/outputs/apk/controlsdev/**/*.apk
+        path: gamenative-controlsdev.apk
         retention-days: 14
 
     - name: Release
@@ -63,4 +82,4 @@ jobs:
       with:
         tag_name: controlsdev-${{ github.run_number }}
         prerelease: true
-        files: app/build/outputs/apk/controlsdev/**/*.apk
+        files: gamenative-controlsdev.apk
