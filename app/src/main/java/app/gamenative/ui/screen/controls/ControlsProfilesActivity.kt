@@ -102,7 +102,11 @@ private fun ControlsProfilesScreen(
 
     var profiles by remember { mutableStateOf<List<ControlsProfile>>(emptyList()) }
     LaunchedEffect(refresh) {
-        profiles = withContext(Dispatchers.IO) { manager.getProfiles(true).toList() }
+        // Reload from disk: other screens (e.g. the editor's Duplicate) use their own manager instance.
+        profiles = withContext(Dispatchers.IO) {
+            manager.loadProfiles(true)
+            manager.getProfiles(true).toList()
+        }
     }
 
     var showNewDialog by remember { mutableStateOf(false) }
