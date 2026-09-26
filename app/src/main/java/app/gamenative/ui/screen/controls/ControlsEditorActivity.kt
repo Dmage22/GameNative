@@ -64,8 +64,6 @@ class ControlsEditorActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        applyImmersiveMode()
-
         val profileId = intent.getIntExtra(EXTRA_PROFILE_ID, -1)
         val profile = InputControlsManager(this).getProfile(profileId)
         if (profile == null) {
@@ -134,6 +132,8 @@ class ControlsEditorActivity : ComponentActivity() {
                 }
             }
         }
+        // The decor view (and its insets controller) only exists once content is set.
+        applyImmersiveMode()
     }
 
     companion object {
