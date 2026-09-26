@@ -178,6 +178,12 @@ android {
             isShrinkResources = true
             signingConfig = signingConfigs.getByName("pluvia")
         }
+        create("controlsdev") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            signingConfig = signingConfigs.getByName("debug")
+            applicationIdSuffix = ".controlsdev"
+        }
         create("release-gold") {
             isMinifyEnabled = true
             isShrinkResources = true
