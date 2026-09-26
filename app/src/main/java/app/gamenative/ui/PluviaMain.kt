@@ -1645,9 +1645,7 @@ fun PluviaMain(
             ) {
                 /** Wrapper home **/
                 composable(route = PluviaScreen.Wrapper.route) {
-                    WrapperHomeScreen(
-                        onOpenSettings = { navController.navigate(PluviaScreen.Settings.route) },
-                    )
+                    WrapperHomeScreen()
                 }
                 /** Login **/
                 composable(route = PluviaScreen.LoginUser.route) {

@@ -18,5 +18,6 @@
   ],
   "controlsProfile": "",
   "containerConfig": "container.json",
-  "fexcorePreset": "fexcore-preset.json"
+  "fexcorePreset": "fexcore-preset.json",
+  "configFile": "legends.ini"
 }

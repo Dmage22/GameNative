@@ -17,6 +17,7 @@ data class WrapperPreset(
     val screenSize: String = "",
     val registry: List<WrapperRegistryValue> = emptyList(),
     val controlsProfile: String = "",
+    val configFile: String = "",
 )
 
 @Serializable
@@ -46,4 +47,9 @@ object WrapperPresetLoader {
             null
         }
     }
+}
+object WrapperPaths {
+    /** Folder the game gets installed into (app-specific storage, visible to Wine as the A: drive). */
+    fun gameDir(context: Context, preset: WrapperPreset): java.io.File =
+        java.io.File(context.getExternalFilesDir(null), "game/${preset.install.gameDir.ifEmpty { preset.id }}")
 }
