@@ -143,16 +143,16 @@ object WineskinPkgInstaller {
             val name = String(nameBytes, 0, nameSize - 1, Charsets.UTF_8) // drop trailing NUL
             if (name == "TRAILER!!!") return
 
-            val type = mode and 0o170000
+            val type = mode and 0xF000 // S_IFMT; 0x8000 = regular file, 0x4000 = directory
             val driveC = name.indexOf(DRIVE_C)
             val relative = if (driveC >= 0) name.substring(driveC + DRIVE_C.length) else null
-            if (relative != null && relative.isNotEmpty() && type == 0o100000) {
+            if (relative != null && relative.isNotEmpty() && type == 0x8000) {
                 checkSafe(relative)
                 val dest = File(staging, relative)
                 dest.parentFile?.mkdirs()
                 FileOutputStream(dest).use { copy(cpio, it, fileSize) }
             } else {
-                if (relative != null && relative.isNotEmpty() && type == 0o040000) {
+                if (relative != null && relative.isNotEmpty() && type == 0x4000) {
                     checkSafe(relative)
                     File(staging, relative).mkdirs()
                 }
