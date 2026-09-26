@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - personal
+      - wrapper
   workflow_dispatch:
 
 jobs:
@@ -12,6 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
+    env:
+      BUILD_VARIANT: ${{ github.ref_name == 'wrapper' && 'wrapper' || 'controlsdev' }}
+      BUILD_VARIANT_CAP: ${{ github.ref_name == 'wrapper' && 'Wrapper' || 'Controlsdev' }}
 
     steps:
     - name: Free disk space
@@ -48,42 +53,40 @@ jobs:
         fi
         yes | "$SDKMANAGER" --install "build-tools;34.0.0"
 
-    # Keep one debug key across runs so each test build can update the previous one in place.
-    - name: Restore debug keystore
-      uses: actions/cache@v4
-      with:
-        path: ~/.android/debug.keystore
-        key: controlsdev-debug-keystore
+    # One fixed debug key (repo secret) for every branch, so each test build updates the previous one in place.
+    - name: Install debug keystore
+      env:
+        DEV_KEYSTORE_B64: ${{ secrets.DEV_KEYSTORE_B64 }}
+      run: |
+        mkdir -p ~/.android
+        echo "$DEV_KEYSTORE_B64" | base64 -d > ~/.android/debug.keystore
+        test -s ~/.android/debug.keystore
 
     - name: Build with Gradle
-      run: ./gradlew :app:bundleLegacyControlsdev
+      run: ./gradlew :app:bundleLegacy${{ env.BUILD_VARIANT_CAP }}
 
     - name: Stop Gradle daemons
       run: ./gradlew --stop
 
     - name: Extract universal APK
       run: |
-        mkdir -p ~/.android
-        [ -f ~/.android/debug.keystore ] || keytool -genkeypair -keystore ~/.android/debug.keystore \
-          -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 \
-          -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
         java -Xmx3g -jar tools/bundletool-all-1.17.2.jar build-apks \
-          --bundle=app/build/outputs/bundle/legacyControlsdev/app-legacy-controlsdev.aab \
+          --bundle=app/build/outputs/bundle/legacy${{ env.BUILD_VARIANT_CAP }}/app-legacy-${{ env.BUILD_VARIANT }}.aab \
           --output=controlsdev.apks --mode=universal \
           --ks="$HOME/.android/debug.keystore" --ks-pass=pass:android --ks-key-alias=androiddebugkey --key-pass=pass:android
-        unzip -p controlsdev.apks universal.apk > gamenative-controlsdev.apk
-        ls -lah gamenative-controlsdev.apk
+        unzip -p controlsdev.apks universal.apk > gamenative-${{ env.BUILD_VARIANT }}.apk
+        ls -lah gamenative-${{ env.BUILD_VARIANT }}.apk
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: gamenative-controlsdev
-        path: gamenative-controlsdev.apk
+        name: gamenative-${{ env.BUILD_VARIANT }}
+        path: gamenative-${{ env.BUILD_VARIANT }}.apk
         retention-days: 14
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: controlsdev-${{ github.run_number }}
+        tag_name: ${{ env.BUILD_VARIANT }}-${{ github.run_number }}
         prerelease: true
-        files: gamenative-controlsdev.apk
+        files: gamenative-${{ env.BUILD_VARIANT }}.apk
