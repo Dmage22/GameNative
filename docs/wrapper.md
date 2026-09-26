@@ -33,6 +33,13 @@ MapleLegends preset uses displayRendererMode = "surfaceflinger" (ASurfaceRendere
 X frames directly; lighter than the Vulkan renderer, but screen effects like sharpening/FSR only exist for
 the GL/Vulkan renderers).
 
+## No online configs
+- PrefManager.autoApplyKnownConfig is forced false in wrapper builds (GameNative defaults it to true and
+  fetches a "best config" from its server when a container is created - ContainerUtils ~line 839).
+- Community configs / library screens aren't reachable in the wrapper UI.
+- Screen effects stay off: FSR and frame generation (lsfg) were tested and don't work with MapleLegends;
+  the export already has lsfgEnabled=false and sharpness None.
+
 ## Flow
 1. First start (no login screen): `WrapperHomeScreen` shows the game name and status.
 2. **Import game**: user picks the downloaded package (or folder); the preset's installer

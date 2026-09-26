@@ -1580,7 +1580,8 @@ object PrefManager {
     // auto-apply known config from BestConfigService on first container creation
     private val AUTO_APPLY_KNOWN_CONFIG = booleanPreferencesKey("auto_apply_known_config")
     var autoApplyKnownConfig: Boolean
-        get() = getPref(AUTO_APPLY_KNOWN_CONFIG, true)
+        // The single-game wrapper ships its own tested config and must never pull one from the server.
+        get() = !BuildConfig.WRAPPER && getPref(AUTO_APPLY_KNOWN_CONFIG, true)
         set(value) = setPref(AUTO_APPLY_KNOWN_CONFIG, value)
 
     // Game compatibility cache (JSON string)
