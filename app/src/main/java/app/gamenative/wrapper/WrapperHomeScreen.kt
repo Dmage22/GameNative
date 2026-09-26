@@ -2,6 +2,7 @@ package app.gamenative.wrapper
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -67,29 +68,38 @@ fun WrapperHomeScreen() {
         )
         Spacer(modifier = Modifier.height(32.dp))
 
-        WrapperButton(text = "Start game", primary = true) {
+        WrapperButton(text = "Start game") {
             SnackbarManager.show("Coming soon")
         }
-        WrapperButton(text = "Import game…") {
-            SnackbarManager.show("Coming soon")
-        }
-        WrapperButton(text = "GPU") {
-            SnackbarManager.show("Coming soon")
-        }
-        WrapperButton(text = "Resolution") {
-            SnackbarManager.show("Coming soon")
-        }
-        if (preset.configFile.isNotEmpty()) {
-            WrapperButton(text = preset.configFile) {
-                editingConfig = File(gameDir, preset.configFile)
-            }
-        }
-        WrapperButton(text = "Controls") {
+        Spacer(modifier = Modifier.height(16.dp))
+
+        val openControls = {
             val profile = InputControlsManager(context).getProfiles(true).firstOrNull()
             if (profile == null) {
                 SnackbarManager.show("No controls profile")
             } else {
                 context.startActivity(ControlsEditorActivity.intent(context, profile.id))
+            }
+        }
+        val smallButtons = buildList<Pair<String, () -> Unit>> {
+            add("Setup" to { SnackbarManager.show("Coming soon") })
+            add("Controls" to openControls)
+            add("GPU" to { SnackbarManager.show("Coming soon") })
+            add("Resolution" to { SnackbarManager.show("Coming soon") })
+            if (preset.configFile.isNotEmpty()) {
+                add(preset.configFile to { editingConfig = File(gameDir, preset.configFile) })
+            }
+        }
+        // Two buttons per row; a lone last button keeps the same width as the others.
+        smallButtons.chunked(2).forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                row.forEach { (label, onClick) ->
+                    WrapperSmallButton(text = label, onClick = onClick, modifier = Modifier.weight(1f))
+                }
+                if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
             }
         }
     }
@@ -102,20 +112,31 @@ fun WrapperHomeScreen() {
 @Composable
 private fun WrapperButton(
     text: String,
-    primary: Boolean = false,
     onClick: () -> Unit,
 ) {
-    val modifier = Modifier
-        .fillMaxWidth()
-        .padding(vertical = 8.dp)
-        .height(56.dp)
-    if (primary) {
-        Button(onClick = onClick, modifier = modifier) {
-            Text(text = text, style = MaterialTheme.typography.titleMedium)
-        }
-    } else {
-        OutlinedButton(onClick = onClick, modifier = modifier) {
-            Text(text = text, style = MaterialTheme.typography.titleMedium)
-        }
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .height(72.dp),
+    ) {
+        Text(text = text, style = MaterialTheme.typography.headlineSmall)
+    }
+}
+
+@Composable
+private fun WrapperSmallButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedButton(
+        onClick = onClick,
+        modifier = modifier
+            .padding(vertical = 6.dp)
+            .height(44.dp),
+    ) {
+        Text(text = text, style = MaterialTheme.typography.labelLarge, maxLines = 1)
     }
 }
