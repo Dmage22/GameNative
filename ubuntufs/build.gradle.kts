@@ -35,7 +35,7 @@ android {
             initWith(getByName("release"))
         }
         create("controlsdev") {
-            initWith(getByName("debug"))
+            initWith(getByName("release"))
         }
     }
 
