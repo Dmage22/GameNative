@@ -33,6 +33,10 @@ import androidx.compose.ui.unit.dp
 import app.gamenative.ui.screen.controls.ControlsProfilesActivity
 import app.gamenative.ui.util.SnackbarManager
 import java.io.File
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import app.gamenative.ui.components.rememberCustomGameFolderPicker
@@ -55,6 +59,29 @@ fun WrapperHomeScreen(
     val scope = rememberCoroutineScope()
     var busyMessage by remember { mutableStateOf<String?>(null) }
     var installedVersion by remember { mutableIntStateOf(0) }
+
+    var showSetup by remember { mutableStateOf(false) }
+    val pkgPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        val p = preset
+        if (uri != null && p != null) scope.launch {
+            busyMessage = "Installing… 0%"
+            val result = withContext(Dispatchers.IO) {
+                runCatching {
+                    WrapperSetup.installFromPkg(context, p, uri) { progress ->
+                        busyMessage = "Installing… ${(progress * 100).toInt()}%"
+                    }
+                }
+            }
+            busyMessage = null
+            result.onSuccess {
+                installedVersion++
+                SnackbarManager.show("${p.name} installed")
+            }.onFailure {
+                Timber.e(it, "Wrapper: .pkg install failed")
+                SnackbarManager.show(it.message ?: "Install failed")
+            }
+        }
+    }
 
     val folderPicker = rememberCustomGameFolderPicker(
         onPathSelected = { path ->
@@ -161,7 +188,7 @@ fun WrapperHomeScreen(
             context.startActivity(ControlsProfilesActivity.intent(context))
         }
         val smallButtons = buildList<Pair<String, () -> Unit>> {
-            add("Setup" to { folderPicker.launchPicker() })
+            add("Setup" to { showSetup = true })
             add("Controls" to openControls)
             add("GPU" to { showGpu = true })
             add("Display" to { showDisplay = true })
@@ -193,6 +220,26 @@ fun WrapperHomeScreen(
 
     editingConfig?.let { file ->
         ConfigFileEditorDialog(file = file, onDismiss = { editingConfig = null })
+    }
+
+    if (showSetup) {
+        AlertDialog(
+            onDismissRequest = { showSetup = false },
+            title = { Text("Setup") },
+            text = { Text("Install the game from the Mac .pkg you downloaded, or use a folder where it is already extracted.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showSetup = false
+                    pkgPicker.launch(arrayOf("*/*"))
+                }) { Text("Install from .pkg") }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showSetup = false
+                    folderPicker.launchPicker()
+                }) { Text("Use extracted folder") }
+            },
+        )
     }
 
     if (showGpu) {

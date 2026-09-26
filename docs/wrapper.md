@@ -55,7 +55,7 @@ the GL/Vulkan renderers).
 ## Phases
 - A: build type + preset parsing + home screen skeleton + skip login
 - B: setup + play with an already-extracted folder
-- C: installers (folder, wineskin-pkg) with progress; update import (event patch keeps the exe)
+- C: installers (folder, wineskin-pkg) with progress [done: WineskinPkgInstaller -> getExternalFilesDir/game]; update import (event patch keeps the exe) [todo]
 - D: lock down settings / quick menu
 
 ## Home screen (user spec)

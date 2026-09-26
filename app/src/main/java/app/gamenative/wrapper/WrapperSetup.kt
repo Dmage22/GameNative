@@ -57,6 +57,20 @@ object WrapperSetup {
     }
 
     /**
+     * Installs the game from the Mac `.pkg` the user downloaded into the app's own storage (no storage
+     * permission needed) and registers it. Blocking; call off the main thread.
+     */
+    fun installFromPkg(context: Context, preset: WrapperPreset, uri: Uri, onProgress: (Float) -> Unit): String {
+        val resolver = context.contentResolver
+        val size = runCatching { resolver.openAssetFileDescriptor(uri, "r")?.use { it.length } }.getOrNull() ?: -1L
+        val target = File(context.getExternalFilesDir(null), "game")
+        val gameDir = resolver.openInputStream(uri)?.use { input ->
+            WineskinPkgInstaller.install(input, size, preset.install.exe, target, onProgress)
+        } ?: throw java.io.IOException("Cannot open the selected file")
+        return registerGameFolder(context, preset, gameDir.absolutePath)
+    }
+
+    /**
      * Installs the bundled components, creates/updates the container from the preset and applies the
      * user's GPU/Display choices. Blocking; call off the main thread.
      */
