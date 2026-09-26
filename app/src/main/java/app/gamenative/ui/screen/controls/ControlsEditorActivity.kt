@@ -23,6 +23,8 @@ import app.gamenative.ui.component.dialog.ElementEditorDialog
 import app.gamenative.ui.screen.xserver.EditModeToolbar
 import app.gamenative.ui.theme.PluviaTheme
 import app.gamenative.ui.util.SnackbarManager
+import app.gamenative.R
+import androidx.core.view.doOnLayout
 import com.winlator.inputcontrols.ControlElement
 import com.winlator.inputcontrols.InputControlsManager
 import com.winlator.widget.InputControlsView
@@ -65,7 +67,8 @@ class ControlsEditorActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val profileId = intent.getIntExtra(EXTRA_PROFILE_ID, -1)
-        val profile = InputControlsManager(this).getProfile(profileId)
+        val manager = InputControlsManager(this)
+        val profile = manager.getProfile(profileId)
         if (profile == null) {
             SnackbarManager.show("Profile not found")
             finish()
@@ -83,9 +86,12 @@ class ControlsEditorActivity : ComponentActivity() {
                         factory = {
                             icView.apply {
                                 setEditMode(true)
-                                // Set the profile once the view has a size so elements
-                                // are laid out against the real dimensions.
-                                post { setProfile(profile) }
+                                // Set the profile once the view has its final size so elements are laid
+                                // out against the real dimensions, then draw them straight away.
+                                doOnLayout {
+                                    setProfile(profile)
+                                    invalidate()
+                                }
                             }
                         },
                         modifier = Modifier.fillMaxSize(),
@@ -116,8 +122,16 @@ class ControlsEditorActivity : ComponentActivity() {
                             profile.loadElements(icView)
                             finish()
                         },
-                        onDuplicate = { _ ->
-                            // TODO: "copy from another profile" is not supported here yet.
+                        onDuplicate = { _ -> },
+                        title = getString(R.string.controls_editing_profile, profile.name),
+                        onDuplicateCurrent = {
+                            profile.save()
+                            val copy = manager.duplicateProfile(profile)
+                            if (copy != null) {
+                                SnackbarManager.show("Duplicated as ${copy.name}")
+                                startActivity(intent(this@ControlsEditorActivity, copy.id))
+                                finish()
+                            }
                         },
                     )
 

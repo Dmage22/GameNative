@@ -1095,11 +1095,30 @@
     <string name="settings_performance_power_control_title">Power Control</string>
     <string name="settings_performance_power_control_subtitle">Enable in-game power control by default (enabled on tested devices: AYN Odin 3, Retroid Pocket 6/Nova)</string>
 
+    <string name="controls_duplicate_profile">Duplicate</string>
+    <string name="controls_editing_profile">Editing: %1$s</string>
+
+    <!-- Controls profiles manager -->
+    <string name="controls_profiles_title">Controls profiles</string>
+    <string name="controls_profiles_manage">Manage controls profiles</string>
+    <string name="controls_profiles_new">New</string>
+    <string name="controls_profiles_import">Import</string>
+    <string name="controls_profiles_edit">Edit</string>
+    <string name="controls_profiles_rename">Rename</string>
+    <string name="controls_profiles_duplicate">Duplicate</string>
+    <string name="controls_profiles_export">Export</string>
+    <string name="controls_profiles_delete">Delete</string>
+    <string name="controls_profiles_name">Name</string>
+    <string name="controls_profiles_new_profile_name">New profile</string>
+    <string name="controls_profiles_empty">No profiles yet</string>
+    <string name="controls_profiles_delete_confirm">Delete profile \"%1$s\"?</string>
+    <string name="controls_profiles_imported">Imported %1$s</string>
+    <string name="controls_profiles_import_failed">Not a valid controls profile</string>
+    <string name="controls_profiles_exported">Exported %1$s</string>
+    <string name="controls_profiles_export_failed">Export failed</string>
+
     <!-- Settings: Controls Group -->
     <string name="settings_controls_title">Controls</string>
-    <string name="settings_controls_import_profile">Import profile…</string>
-    <string name="settings_controls_export_all_profiles">Export all profiles…</string>
-    <string name="settings_controls_coming_soon">Coming soon</string>
 
     <!-- Settings: Emulation Group -->
     <string name="settings_emulation_title">Emulation</string>
