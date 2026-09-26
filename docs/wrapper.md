@@ -74,3 +74,11 @@ editor, since the game folder may be app-private) · Controls.
 - Grid view idea: run the virtual desktop at 2x the client size with each client window in a fixed
   quadrant; the tab view zooms the renderer onto one quadrant, the grid view shows the whole desktop.
   Touch coordinates must be mapped to the zoomed quadrant.
+
+## In-game side column (replaces GameNative's quick menu + drag-out side panel in the wrapper)
+- The back key / drag-out panel no longer open GameNative's Quick Menu; users never see it.
+- One slim column at the very LEFT edge, split in half:
+  - Top half, tools: Edit on-screen controls, show/hide on-screen controls, Keyboard (chat), FPS limiter,
+    Exit game. (Candidates to keep from the Quick Menu; everything else stays hidden.)
+  - Bottom half, clients: Tab 1..N, "next tab", "+" start another client (max 4).
+- Collapsible to a thin handle so it doesn't cover the game.
