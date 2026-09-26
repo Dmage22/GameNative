@@ -42,3 +42,21 @@ The wrapper code is generic; everything game-specific lives in a **preset** unde
 - B: setup + play with an already-extracted folder
 - C: installers (folder, wineskin-pkg) with progress; update import (event patch keeps the exe)
 - D: lock down settings / quick menu
+
+## Home screen (user spec)
+Start game · GPU (driver choice) · Resolution (container screen size; must cover the in-game
+resolution, e.g. 1366x768) · legends.ini (opens the game's own config file in an in-app text
+editor, since the game folder may be app-private) · Controls.
+
+## Preset files (MapleLegends)
+- `container.json`: GameNative "Export config" of the working container, machine-specific keys removed
+  (id, drives, installPath, session stats, controls profile id) and FEX_SILENTLOG dropped.
+- `fexcore-preset.json`: the FEX preset the container used (user's "D2R" preset: TSO+vector TSO,
+  multiblock, MAXINST 5000, small TSC scale, SMC mtrack, volatile metadata, mono hacks).
+- Components to bundle: proton-11.0-2-arm64ec-6, FEXCore 2609-maple1, DXVK 2.7.1-1-gplasync,
+  graphics driver "Wrapper" + Turnip Adreno T30 (@Mr_Purple_666).
+
+## TODO before publishing
+- Per-GPU driver selection: the bundled Turnip T30 is only verified on Adreno 840 (Galaxy Z Fold 7).
+  Other Adreno -> system Qualcomm driver or another Turnip build; Mali/Xclipse -> system driver via
+  Wrapper-gamenative. Testing is on the Fold 7 only for now.

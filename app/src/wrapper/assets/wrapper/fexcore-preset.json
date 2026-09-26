@@ -1,0 +1,20 @@
+{
+  "name": "MapleLegends",
+  "env": {
+    "FEX_TSOENABLED": "1",
+    "FEX_VECTORTSOENABLED": "1",
+    "FEX_MEMCPYSETTSOENABLED": "0",
+    "FEX_HALFBARRIERTSOENABLED": "0",
+    "FEX_X87REDUCEDPRECISION": "0",
+    "FEX_MULTIBLOCK": "1",
+    "FEX_MAXINST": "5000",
+    "FEX_HOSTFEATURES": "off",
+    "FEX_SMALLTSCSCALE": "1",
+    "FEX_SMCCHECKS": "mtrack",
+    "FEX_VOLATILEMETADATA": "1",
+    "FEX_MONOHACKS": "1",
+    "FEX_HIDEHYPERVISORBIT": "0",
+    "FEX_DISABLEL2CACHE": "0",
+    "FEX_DYNAMICL1CACHE": "0"
+  }
+}

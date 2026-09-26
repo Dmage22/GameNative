@@ -2,6 +2,7 @@ package app.gamenative.wrapper
 
 import android.content.Context
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
 import timber.log.Timber

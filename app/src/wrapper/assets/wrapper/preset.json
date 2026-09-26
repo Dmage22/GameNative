@@ -1,1 +1,22 @@
-{"id": "maplelegends", "name": "MapleLegends", "install": {"type": "wineskin-pkg", "gameDir": "MapleLegends", "exe": "MapleLegends.exe"}, "components": [], "container": {}, "screenSize": "1366x768", "registry": [{"key": "Software\\Wine", "name": "Version", "value": "win98"}], "controlsProfile": ""}
+{
+  "id": "maplelegends",
+  "name": "MapleLegends",
+  "install": {
+    "type": "wineskin-pkg",
+    "gameDir": "MapleLegends",
+    "exe": "MapleLegends.exe"
+  },
+  "components": [],
+  "container": {},
+  "screenSize": "1366x768",
+  "registry": [
+    {
+      "key": "Software\\Wine",
+      "name": "Version",
+      "value": "win98"
+    }
+  ],
+  "controlsProfile": "",
+  "containerConfig": "container.json",
+  "fexcorePreset": "fexcore-preset.json"
+}
