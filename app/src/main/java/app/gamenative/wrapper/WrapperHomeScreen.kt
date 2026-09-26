@@ -31,9 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import app.gamenative.ui.screen.controls.ControlsEditorActivity
+import app.gamenative.ui.screen.controls.ControlsProfilesActivity
 import app.gamenative.ui.util.SnackbarManager
-import com.winlator.inputcontrols.InputControlsManager
 import java.io.File
 
 @Composable
@@ -99,12 +98,7 @@ fun WrapperHomeScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         val openControls = {
-            val profile = InputControlsManager(context).getProfiles(true).firstOrNull()
-            if (profile == null) {
-                SnackbarManager.show("No controls profile")
-            } else {
-                context.startActivity(ControlsEditorActivity.intent(context, profile.id))
-            }
+            context.startActivity(ControlsProfilesActivity.intent(context))
         }
         val smallButtons = buildList<Pair<String, () -> Unit>> {
             add("Setup" to { SnackbarManager.show("Coming soon") })
