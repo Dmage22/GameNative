@@ -53,12 +53,14 @@ jobs:
         fi
         yes | "$SDKMANAGER" --install "build-tools;34.0.0"
 
-    # Keep one debug key across runs so each test build can update the previous one in place.
-    - name: Restore debug keystore
-      uses: actions/cache@v4
-      with:
-        path: ~/.android/debug.keystore
-        key: controlsdev-debug-keystore
+    # One fixed debug key (repo secret) for every branch, so each test build updates the previous one in place.
+    - name: Install debug keystore
+      env:
+        DEV_KEYSTORE_B64: ${{ secrets.DEV_KEYSTORE_B64 }}
+      run: |
+        mkdir -p ~/.android
+        echo "$DEV_KEYSTORE_B64" | base64 -d > ~/.android/debug.keystore
+        test -s ~/.android/debug.keystore
 
     - name: Build with Gradle
       run: ./gradlew :app:bundleLegacy${{ env.BUILD_VARIANT_CAP }}
@@ -68,10 +70,6 @@ jobs:
 
     - name: Extract universal APK
       run: |
-        mkdir -p ~/.android
-        [ -f ~/.android/debug.keystore ] || keytool -genkeypair -keystore ~/.android/debug.keystore \
-          -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 \
-          -validity 10000 -dname "CN=Android Debug,O=Android,C=US"
         java -Xmx3g -jar tools/bundletool-all-1.17.2.jar build-apks \
           --bundle=app/build/outputs/bundle/legacy${{ env.BUILD_VARIANT_CAP }}/app-legacy-${{ env.BUILD_VARIANT }}.aab \
           --output=controlsdev.apks --mode=universal \
