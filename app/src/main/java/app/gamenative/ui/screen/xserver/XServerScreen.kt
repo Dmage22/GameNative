@@ -3218,7 +3218,7 @@ private fun ManualResumeOverlay(onResume: () -> Unit, immersive: Boolean) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EditModeToolbar(
+internal fun EditModeToolbar(
     onAdd: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit,

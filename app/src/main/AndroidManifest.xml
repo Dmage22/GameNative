@@ -164,6 +164,14 @@
             android:exported="false"
             android:theme="@style/Theme.Pluvia" />
 
+        <!-- Full-screen, out-of-game editor for on-screen controls profiles -->
+        <activity
+            android:name=".ui.screen.controls.ControlsEditorActivity"
+            android:exported="false"
+            android:screenOrientation="sensorLandscape"
+            android:configChanges="orientation|screenSize|keyboard|keyboardHidden|navigation"
+            android:theme="@style/Theme.Pluvia" />
+
         <!-- Launcher icon aliases to allow switching app icon at runtime -->
         <activity-alias
             android:name=".MainActivityAliasDefault"

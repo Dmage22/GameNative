@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import app.gamenative.R
+import app.gamenative.ui.screen.controls.ControlsEditorActivity
 import app.gamenative.ui.theme.settingsTileColors
 import app.gamenative.ui.util.SnackbarManager
 import com.alorma.compose.settings.ui.SettingsGroup
@@ -42,7 +43,9 @@ fun SettingsGroupControls() {
             SettingsMenuLink(
                 colors = settingsTileColors(),
                 title = { Text(text = profile.name) },
-                onClick = {},
+                onClick = {
+                    context.startActivity(ControlsEditorActivity.intent(context, profile.id))
+                },
             )
         }
 
