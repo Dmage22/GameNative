@@ -33,12 +33,49 @@ import androidx.compose.ui.unit.dp
 import app.gamenative.ui.screen.controls.ControlsProfilesActivity
 import app.gamenative.ui.util.SnackbarManager
 import java.io.File
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberCoroutineScope
+import app.gamenative.ui.components.rememberCustomGameFolderPicker
+import app.gamenative.ui.components.requestPermissionsForPath
+import app.gamenative.utils.CustomGameScanner
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 @Composable
-fun WrapperHomeScreen() {
+fun WrapperHomeScreen(
+    onStartGame: (appId: String) -> Unit,
+) {
     val context = LocalContext.current
     val preset = remember { WrapperPresetLoader.load(context) }
     var editingConfig by remember { mutableStateOf<File?>(null) }
+    val scope = rememberCoroutineScope()
+    var busyMessage by remember { mutableStateOf<String?>(null) }
+    var installedVersion by remember { mutableIntStateOf(0) }
+
+    val folderPicker = rememberCustomGameFolderPicker(
+        onPathSelected = { path ->
+            val p = preset
+            if (p == null) {
+                SnackbarManager.show("Preset missing")
+            } else if (!CustomGameScanner.hasStoragePermission(context, path)) {
+                requestPermissionsForPath(context, path, null)
+                SnackbarManager.show("Allow file access, then tap Setup again")
+            } else scope.launch {
+                busyMessage = "Setting up…"
+                val result = withContext(Dispatchers.IO) {
+                    runCatching { WrapperSetup.registerGameFolder(context, p, path) }
+                }
+                busyMessage = null
+                result.onSuccess {
+                    installedVersion++
+                    SnackbarManager.show("${p.name} found")
+                }.onFailure { SnackbarManager.show(it.message ?: "Setup failed") }
+            }
+        },
+        onFailure = { SnackbarManager.show(it) },
+    )
 
     val background = remember(preset) {
         preset?.background?.takeIf { it.isNotEmpty() }?.let { name ->
@@ -69,8 +106,10 @@ fun WrapperHomeScreen() {
             return@Box
         }
 
-        val gameDir = remember(preset) { WrapperPaths.gameDir(context, preset) }
-        val installed = File(gameDir, preset.install.exe).isFile
+        val gameDir = remember(preset, installedVersion) {
+            WrapperSetup.gameFolder(context)?.let { File(it) } ?: WrapperPaths.gameDir(context, preset)
+        }
+        val installed = remember(preset, installedVersion) { WrapperSetup.isGameInstalled(context, preset) }
 
         // Title and Start game hug the top, the other buttons hug the bottom, leaving the logo visible in between.
         Column(
@@ -85,12 +124,29 @@ fun WrapperHomeScreen() {
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = if (installed) "Ready" else "Game not installed",
+                text = busyMessage ?: if (installed) "Ready" else "Game not installed - tap Setup",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { SnackbarManager.show("Coming soon") }) {
+            Button(
+                enabled = busyMessage == null,
+                onClick = {
+                    if (!installed) {
+                        SnackbarManager.show("Run Setup first")
+                    } else scope.launch {
+                        busyMessage = "Preparing…"
+                        val result = withContext(Dispatchers.IO) {
+                            runCatching { WrapperSetup.prepare(context, preset) { msg -> busyMessage = msg } }
+                        }
+                        busyMessage = null
+                        result.onSuccess(onStartGame).onFailure {
+                            Timber.e(it, "Wrapper: prepare failed")
+                            SnackbarManager.show(it.message ?: "Could not start the game")
+                        }
+                    }
+                },
+            ) {
                 Text(
                     text = "Start game",
                     style = MaterialTheme.typography.titleLarge,
@@ -103,7 +159,7 @@ fun WrapperHomeScreen() {
             context.startActivity(ControlsProfilesActivity.intent(context))
         }
         val smallButtons = buildList<Pair<String, () -> Unit>> {
-            add("Setup" to { SnackbarManager.show("Coming soon") })
+            add("Setup" to { folderPicker.launchPicker() })
             add("Controls" to openControls)
             add("GPU" to { SnackbarManager.show("Coming soon") })
             add("Display" to { SnackbarManager.show("Coming soon") })

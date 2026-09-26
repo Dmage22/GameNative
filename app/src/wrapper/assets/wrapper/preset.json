@@ -6,9 +6,14 @@
     "gameDir": "MapleLegends",
     "exe": "MapleLegends.exe"
   },
-  "components": [],
+  "components": [
+    "proton-11.0-2-arm64ec.wcp",
+    "fexcore-2609-maple1.wcp",
+    "dxvk-gplasync-2.7.1-1.wcp",
+    "turnip_mrpurple_T30-toasted.adpkg.zip"
+  ],
   "container": {},
-  "screenSize": "1366x768",
+  "screenSize": "1280x1024",
   "registry": [
     {
       "key": "Software\\Wine",

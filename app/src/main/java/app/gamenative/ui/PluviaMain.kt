@@ -1645,7 +1645,23 @@ fun PluviaMain(
             ) {
                 /** Wrapper home **/
                 composable(route = PluviaScreen.Wrapper.route) {
-                    WrapperHomeScreen()
+                    WrapperHomeScreen(
+                        onStartGame = { appId ->
+                            // Single-game wrapper: no Steam, no cloud saves.
+                            viewModel.setOffline(true)
+                            preLaunchApp(
+                                context = context,
+                                appId = appId,
+                                skipCloudSync = true,
+                                setLoadingDialogVisible = viewModel::setLoadingDialogVisible,
+                                setLoadingProgress = viewModel::setLoadingDialogProgress,
+                                setLoadingMessage = viewModel::setLoadingDialogMessage,
+                                setMessageDialogState = setMessageDialogState,
+                                onSuccess = viewModel::launchApp,
+                                isOffline = true,
+                            )
+                        },
+                    )
                 }
                 /** Login **/
                 composable(route = PluviaScreen.LoginUser.route) {
@@ -1852,7 +1868,8 @@ fun PluviaMain(
                     if (!hasContainer) {
                         LaunchedEffect(launchedAppId) {
                             Timber.w("XServer route entered without a container for '$launchedAppId', returning home")
-                            navController.navigate(PluviaScreen.Home.route + "?offline=$xServerIsOffline") {
+                            val home = if (BuildConfig.WRAPPER) PluviaScreen.Wrapper.route else PluviaScreen.Home.route + "?offline=$xServerIsOffline"
+                            navController.navigate(home) {
                                 popUpTo(PluviaScreen.XServer.route) { inclusive = true }
                             }
                         }

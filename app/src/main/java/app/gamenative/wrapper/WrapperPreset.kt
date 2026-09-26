@@ -19,6 +19,8 @@ data class WrapperPreset(
     val controlsProfile: String = "",
     val configFile: String = "",
     val background: String = "",
+    val containerConfig: String = "",
+    val fexcorePreset: String = "",
 )
 
 @Serializable
