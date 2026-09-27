@@ -140,6 +140,23 @@ fun WrapperHomeScreen(
             WrapperSetup.gameFolder(context)?.let { File(it) } ?: WrapperPaths.gameDir(context, preset)
         }
         val installed = remember(preset, installedVersion) { WrapperSetup.isGameInstalled(context, preset) }
+        val ready = remember(preset, installedVersion) { WrapperSetup.isEnvironmentReady(context) }
+        val runSetup: () -> Unit = {
+            if (!installed) {
+                SnackbarManager.show("Choose the game files first")
+            } else scope.launch {
+                busyMessage = "Setting up…"
+                val result = withContext(Dispatchers.IO) {
+                    runCatching { WrapperSetup.setupEnvironment(context, preset) { msg -> busyMessage = msg } }
+                }
+                busyMessage = null
+                installedVersion++
+                result.onSuccess { SnackbarManager.show("Setup complete") }.onFailure {
+                    Timber.e(it, "Wrapper: setup failed")
+                    SnackbarManager.show(it.message ?: "Setup failed")
+                }
+            }
+        }
 
         // Title and Start game hug the top, the other buttons hug the bottom, leaving the logo visible in between.
         Column(
@@ -154,7 +171,11 @@ fun WrapperHomeScreen(
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = busyMessage ?: if (installed) "Ready" else "Game not installed - tap Setup",
+                text = busyMessage ?: when {
+                    !installed -> "Step 1: tap Game files"
+                    !ready -> "Step 2: tap Setup"
+                    else -> "Ready"
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -163,11 +184,13 @@ fun WrapperHomeScreen(
                 enabled = busyMessage == null,
                 onClick = {
                     if (!installed) {
-                        SnackbarManager.show("Run Setup first")
+                        SnackbarManager.show("Choose the game files first")
+                    } else if (!ready) {
+                        SnackbarManager.show("Tap Setup first")
                     } else scope.launch {
-                        busyMessage = "Preparing…"
+                        busyMessage = "Starting…"
                         val result = withContext(Dispatchers.IO) {
-                            runCatching { WrapperSetup.prepare(context, preset) { msg -> busyMessage = msg } }
+                            runCatching { WrapperSetup.prepareLaunch(context, preset) }
                         }
                         busyMessage = null
                         result.onSuccess(onStartGame).onFailure {
@@ -189,7 +212,8 @@ fun WrapperHomeScreen(
             context.startActivity(ControlsProfilesActivity.intent(context))
         }
         val smallButtons = buildList<Pair<String, () -> Unit>> {
-            add("Setup" to { showSetup = true })
+            add("Game files" to { showSetup = true })
+            add("Setup" to runSetup)
             add("Controls" to openControls)
             add("GPU" to { showGpu = true })
             add("Display" to { showDisplay = true })
@@ -239,7 +263,7 @@ fun WrapperHomeScreen(
     if (showSetup) {
         AlertDialog(
             onDismissRequest = { showSetup = false },
-            title = { Text("Setup") },
+            title = { Text("Game files") },
             text = { Text("Install the game from the Mac .pkg you downloaded, or use a folder where it is already extracted.") },
             confirmButton = {
                 TextButton(onClick = {

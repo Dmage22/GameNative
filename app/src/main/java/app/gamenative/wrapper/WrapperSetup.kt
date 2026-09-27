@@ -13,13 +13,15 @@ import com.winlator.core.WineRegistryEditor
 import com.winlator.core.envvars.EnvVars
 import com.winlator.fexcore.FEXCorePresetManager
 import com.winlator.inputcontrols.InputControlsManager
+import com.winlator.xenvironment.ImageFs
+import com.winlator.xenvironment.ImageFsInstaller
 import java.io.File
 import org.json.JSONObject
 import timber.log.Timber
 
 /**
- * First-run and pre-launch setup for the single-game wrapper, driven entirely by the preset
- * (see docs/wrapper.md). Every step is idempotent so it can run before each launch.
+ * The wrapper's three steps, driven entirely by the preset (see docs/wrapper.md):
+ * game files ([installFromPkg] / [registerGameFolder]), [setupEnvironment], then [prepareLaunch].
  */
 object WrapperSetup {
     private const val STATE_PREFS = "wrapper_state"
@@ -28,6 +30,7 @@ object WrapperSetup {
     private const val KEY_COMPONENTS_FOR_UPDATE = "components_installed_for_update"
     private const val KEY_CONTROLS_IMPORTED = "controls_profile_imported"
     private const val KEY_CONTROLS_PROFILE_ID = "controls_profile_id"
+    private const val KEY_ENV_READY_FOR_UPDATE = "environment_ready_for_update"
 
     // Written by the GPU / Display dialogs (WrapperSettings).
     private const val SETTINGS_PREFS = "wrapper_settings"
@@ -74,12 +77,18 @@ object WrapperSetup {
         return registerGameFolder(context, preset, gameDir.absolutePath)
     }
 
+    /** True once [setupEnvironment] has completed for the installed app version. */
+    fun isEnvironmentReady(context: Context): Boolean =
+        context.getSharedPreferences(STATE_PREFS, Context.MODE_PRIVATE).getLong(KEY_ENV_READY_FOR_UPDATE, 0L) ==
+            appUpdateTime(context)
+
     /**
-     * Installs the bundled components, creates/updates the container from the preset and applies the
-     * user's GPU/Display choices. Blocking; call off the main thread.
+     * The Setup step: installs the bundled components, creates the container from the preset, writes the
+     * registry values and installs the base image, so Start game only has to launch. Blocking; call off
+     * the main thread. Needs the game files first (the container maps A: to the game folder).
      */
-    fun prepare(context: Context, preset: WrapperPreset, onStatus: (String) -> Unit = {}): String {
-        val appId = appId(context) ?: throw IllegalStateException("Run Setup first")
+    fun setupEnvironment(context: Context, preset: WrapperPreset, onStatus: (String) -> Unit = {}) {
+        val appId = appId(context) ?: throw IllegalStateException("Choose the game files first")
 
         onStatus("Installing components…")
         installComponents(context, preset)
@@ -104,16 +113,41 @@ object WrapperSetup {
         applyUserSettings(context, preset, container)
         linkControlsProfile(context, container)
         container.saveData()
-
         applyRegistry(container, preset)
+
+        // Base system image. GameNative only writes the variant marker when a game boots, so write it
+        // here too, otherwise the first launch would install the image again.
+        onStatus("Installing base system… 0%")
+        val ok = ImageFsInstaller.installIfNeededFuture(context, context.assets, container) { percent ->
+            onStatus("Installing base system… $percent%")
+        }.get()
+        if (!ok) throw IllegalStateException("Base system installation failed")
+        ImageFs.find(context).createVariantFile(container.containerVariant)
+
+        context.getSharedPreferences(STATE_PREFS, Context.MODE_PRIVATE).edit()
+            .putLong(KEY_ENV_READY_FOR_UPDATE, appUpdateTime(context))
+            .apply()
+    }
+
+    /** The Start game step: applies the player's GPU/Display/controls choices and returns the appId. */
+    fun prepareLaunch(context: Context, preset: WrapperPreset): String {
+        val appId = appId(context) ?: throw IllegalStateException("Choose the game files first")
+        check(isEnvironmentReady(context)) { "Tap Setup first" }
+        val container = ContainerUtils.getOrCreateContainer(context, appId)
+        applyUserSettings(context, preset, container)
+        linkControlsProfile(context, container)
+        container.saveData()
         return appId
     }
+
+    private fun appUpdateTime(context: Context): Long =
+        context.packageManager.getPackageInfo(context.packageName, 0).lastUpdateTime
 
     private fun installComponents(context: Context, preset: WrapperPreset) {
         if (preset.components.isEmpty()) return
         // Components only change with the APK, so install them once per app update.
         val state = context.getSharedPreferences(STATE_PREFS, Context.MODE_PRIVATE)
-        val appUpdated = context.packageManager.getPackageInfo(context.packageName, 0).lastUpdateTime
+        val appUpdated = appUpdateTime(context)
         if (state.getLong(KEY_COMPONENTS_FOR_UPDATE, 0L) == appUpdated) return
 
         val contentsManager = ContentsManager(context)

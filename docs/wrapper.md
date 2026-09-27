@@ -40,6 +40,12 @@ the GL/Vulkan renderers).
 - Screen effects stay off: FSR and frame generation (lsfg) were tested and don't work with MapleLegends;
   the export already has lsfgEnabled=false and sharpness None.
 
+## Steps (home screen)
+1. **Game files**: install from the Mac .pkg or pick an extracted folder (asks for file access if needed).
+2. **Setup**: WrapperSetup.setupEnvironment - components, FEX preset, container, registry, base image
+   (+ imagefs variant marker). Remembered per app version; an app update asks for Setup again.
+3. **Start game**: WrapperSetup.prepareLaunch - applies GPU/Display/controls choices, then launches.
+
 ## Flow
 1. First start (no login screen): `WrapperHomeScreen` shows the game name and status.
 2. **Import game**: user picks the downloaded package (or folder); the preset's installer
