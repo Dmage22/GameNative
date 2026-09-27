@@ -1,6 +1,10 @@
 package app.gamenative.wrapper
 
+import android.content.Context
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.provider.DocumentsContract
+import android.provider.OpenableColumns
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -59,6 +63,7 @@ fun WrapperHomeScreen(
     val scope = rememberCoroutineScope()
     var busyMessage by remember { mutableStateOf<String?>(null) }
     var installedVersion by remember { mutableIntStateOf(0) }
+    var installedPkgUri by remember { mutableStateOf<Uri?>(null) }
 
     var showSetup by remember { mutableStateOf(false) }
     var showCredits by remember { mutableStateOf(false) }
@@ -76,6 +81,7 @@ fun WrapperHomeScreen(
             busyMessage = null
             result.onSuccess {
                 installedVersion++
+                installedPkgUri = uri
                 SnackbarManager.show("${p.name} installed")
             }.onFailure {
                 Timber.e(it, "Wrapper: .pkg install failed")
@@ -265,7 +271,44 @@ fun WrapperHomeScreen(
             onDismiss = { showDisplay = false },
         )
     }
+
+    installedPkgUri?.let { pkgUri ->
+        val (pkgName, pkgSizeBytes) = remember(pkgUri) { queryPkgInfo(context, pkgUri) }
+        AlertDialog(
+            onDismissRequest = { installedPkgUri = null },
+            title = { Text("Delete the downloaded package?") },
+            text = {
+                val sizeText = pkgSizeBytes?.let { " to free about ${"%.1f".format(it / 1e9)} GB." } ?: "."
+                Text("The game is installed. You can delete ${pkgName ?: "the package"}$sizeText")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    installedPkgUri = null
+                    scope.launch {
+                        val deleted = withContext(Dispatchers.IO) {
+                            runCatching {
+                                DocumentsContract.deleteDocument(context.contentResolver, pkgUri)
+                            }.getOrDefault(false)
+                        }
+                        SnackbarManager.show(if (deleted) "Package deleted" else "Could not delete - delete it in your file manager")
+                    }
+                }) { Text("Delete") }
+            },
+            dismissButton = {
+                TextButton(onClick = { installedPkgUri = null }) { Text("Keep") }
+            },
+        )
+    }
 }
+
+/** Looks up the display name and size of the picked package; either may be null. */
+private fun queryPkgInfo(context: Context, uri: Uri): Pair<String?, Long?> = runCatching {
+    context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null)?.use { cursor ->
+        val name = if (cursor.moveToFirst() && !cursor.isNull(0)) cursor.getString(0) else null
+        val size = if (cursor.moveToFirst() && !cursor.isNull(1)) cursor.getLong(1) else null
+        name to size
+    } ?: (null to null)
+}.getOrDefault(null to null)
 
 @Composable
 private fun WrapperSmallButton(
