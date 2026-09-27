@@ -174,7 +174,9 @@ object WrapperSetup {
             val json = context.assets.open("wrapper/${preset.controlsProfile}").bufferedReader().use {
                 JSONObject(it.readText())
             }
-            val profile = InputControlsManager(context).importProfile(json) ?: return
+            // importProfile numbers the new profile after the highest known id, so load the existing ones first.
+            val manager = InputControlsManager(context).apply { getProfiles() }
+            val profile = manager.importProfile(json) ?: return
             state.edit()
                 .putBoolean(KEY_CONTROLS_IMPORTED, true)
                 .putInt(KEY_CONTROLS_PROFILE_ID, profile.id)
