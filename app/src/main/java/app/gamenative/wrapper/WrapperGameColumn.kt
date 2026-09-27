@@ -1,10 +1,16 @@
 package app.gamenative.wrapper
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Keyboard
+import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
@@ -36,10 +43,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.gamenative.ui.component.QuickMenuAction
+import kotlinx.coroutines.delay
 
 /**
  * The wrapper's in-game column, replacing GameNative's Quick Menu (see docs/wrapper.md).
@@ -57,6 +66,21 @@ fun WrapperGameColumn(
 ) {
     var expanded by remember { mutableStateOf(false) }
     var confirmExit by remember { mutableStateOf(false) }
+
+    // The handle pulses for a few seconds after the game starts so new players notice it.
+    var pulsing by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        delay(6000)
+        pulsing = false
+    }
+    val pulse = rememberInfiniteTransition(label = "handle")
+    val pulseAlpha by pulse.animateFloat(
+        initialValue = 0.35f,
+        targetValue = 0.9f,
+        animationSpec = infiniteRepeatable(tween(700), RepeatMode.Reverse),
+        label = "handleAlpha",
+    )
+    val handleAlpha = if (pulsing) pulseAlpha else 0.35f
 
     LaunchedEffect(menuRequested) {
         if (menuRequested) {
@@ -85,9 +109,18 @@ fun WrapperGameColumn(
                     modifier = Modifier
                         .width(5.dp)
                         .height(56.dp)
-                        .background(Color.White.copy(alpha = 0.35f), RoundedCornerShape(3.dp)),
+                        .background(Color.White.copy(alpha = handleAlpha), RoundedCornerShape(3.dp)),
                 )
             }
+        }
+
+        if (expanded) {
+            // Tapping anywhere outside the column closes it.
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .pointerInput(Unit) { detectTapGestures { expanded = false } },
+            )
         }
 
         AnimatedVisibility(
@@ -123,6 +156,7 @@ fun WrapperGameColumn(
                     Tool(Icons.Default.Edit, "Edit controls") { run(QuickMenuAction.EDIT_CONTROLS) }
                     Tool(Icons.Default.Visibility, "Show or hide controls") { run(QuickMenuAction.INPUT_CONTROLS) }
                     Tool(Icons.Default.Keyboard, "Keyboard") { run(QuickMenuAction.KEYBOARD) }
+                    Tool(Icons.Default.QueryStats, "Performance overlay") { run(QuickMenuAction.PERFORMANCE_HUD) }
                     Tool(Icons.AutoMirrored.Filled.ExitToApp, "Exit game") { confirmExit = true }
                 }
             }

@@ -523,14 +523,15 @@ object PrefManager {
 
     private val PERFORMANCE_HUD_X_FRACTION = floatPreferencesKey("performance_hud_x_fraction")
     var performanceHudXFraction: Float
-        get() = getPref(PERFORMANCE_HUD_X_FRACTION, -1f)
+        // The wrapper keeps the top-left corner free for the game layout's buttons: default to top centre.
+        get() = getPref(PERFORMANCE_HUD_X_FRACTION, if (BuildConfig.WRAPPER) 0.5f else -1f)
         set(value) {
             setPref(PERFORMANCE_HUD_X_FRACTION, value.coerceIn(-1f, 1f))
         }
 
     private val PERFORMANCE_HUD_Y_FRACTION = floatPreferencesKey("performance_hud_y_fraction")
     var performanceHudYFraction: Float
-        get() = getPref(PERFORMANCE_HUD_Y_FRACTION, -1f)
+        get() = getPref(PERFORMANCE_HUD_Y_FRACTION, if (BuildConfig.WRAPPER) 0.12f else -1f)
         set(value) {
             setPref(PERFORMANCE_HUD_Y_FRACTION, value.coerceIn(-1f, 1f))
         }

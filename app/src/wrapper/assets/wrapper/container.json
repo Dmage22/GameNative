@@ -68,7 +68,7 @@
   "disableEpicOverlay": false,
   "disableMouseInput": false,
   "touchscreenMode": false,
-  "shooterMode": true,
+  "shooterMode": false,
   "externalDisplayMode": "off",
   "externalDisplaySwap": false,
   "useDRI3": true,
