@@ -39,9 +39,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import app.gamenative.ui.components.rememberCustomGameFolderPicker
-import app.gamenative.ui.components.requestPermissionsForPath
-import app.gamenative.utils.CustomGameScanner
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -84,28 +81,6 @@ fun WrapperHomeScreen(
         }
     }
 
-    val folderPicker = rememberCustomGameFolderPicker(
-        onPathSelected = { path ->
-            val p = preset
-            if (p == null) {
-                SnackbarManager.show("Preset missing")
-            } else if (!CustomGameScanner.hasStoragePermission(context, path)) {
-                requestPermissionsForPath(context, path, null)
-                SnackbarManager.show("Allow file access, then tap Setup again")
-            } else scope.launch {
-                busyMessage = "Setting up…"
-                val result = withContext(Dispatchers.IO) {
-                    runCatching { WrapperSetup.registerGameFolder(context, p, path) }
-                }
-                busyMessage = null
-                result.onSuccess {
-                    installedVersion++
-                    SnackbarManager.show("${p.name} found")
-                }.onFailure { SnackbarManager.show(it.message ?: "Setup failed") }
-            }
-        },
-        onFailure = { SnackbarManager.show(it) },
-    )
 
     val background = remember(preset) {
         preset?.background?.takeIf { it.isNotEmpty() }?.let { name ->
@@ -264,19 +239,14 @@ fun WrapperHomeScreen(
         AlertDialog(
             onDismissRequest = { showSetup = false },
             title = { Text("Game files") },
-            text = { Text("Install the game from the Mac .pkg you downloaded, or use a folder where it is already extracted.") },
+            text = { Text("Choose the ${preset?.name.orEmpty()} Mac .pkg you downloaded. It is unpacked into this app; the file itself is left untouched.") },
             confirmButton = {
                 TextButton(onClick = {
                     showSetup = false
                     pkgPicker.launch(arrayOf("*/*"))
-                }) { Text("Install from .pkg") }
+                }) { Text("Choose .pkg") }
             },
-            dismissButton = {
-                TextButton(onClick = {
-                    showSetup = false
-                    folderPicker.launchPicker()
-                }) { Text("Use extracted folder") }
-            },
+            dismissButton = { TextButton(onClick = { showSetup = false }) { Text("Cancel") } },
         )
     }
 

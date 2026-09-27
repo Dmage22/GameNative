@@ -41,7 +41,8 @@ the GL/Vulkan renderers).
   the export already has lsfgEnabled=false and sharpness None.
 
 ## Steps (home screen)
-1. **Game files**: install from the Mac .pkg or pick an extracted folder (asks for file access if needed).
+1. **Game files**: pick the Mac .pkg with the system file picker (no permission); it is unpacked into the
+   app's own storage. No folder option: that needed All-files access, which the wrapper never asks for.
 2. **Setup**: WrapperSetup.setupEnvironment - components, FEX preset, container, registry, base image
    (+ imagefs variant marker). Remembered per app version; an app update asks for Setup again.
 3. **Start game**: WrapperSetup.prepareLaunch - applies GPU/Display/controls choices, then launches.
@@ -107,3 +108,7 @@ editor, since the game folder may be app-private) · Controls.
   keyboard, a captured mouse, or a game controller is detected (XServerScreen.evaluateDevice ->
   hideInputControls; flag hasUpdatedScreenGamepad). They don't come back on unplug - the show/hide tool
   covers that. Keep this behaviour.
+
+## Permissions
+The wrapper asks for none: no All-files access (removed in app/src/wrapper/AndroidManifest.xml) and no
+notification prompt (MainActivity skips it for WRAPPER builds).
