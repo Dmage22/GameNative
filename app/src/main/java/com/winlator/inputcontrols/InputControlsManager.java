@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.util.JsonReader;
 import android.util.Log;
 
+import app.gamenative.BuildConfig;
 import com.winlator.PrefManager;
 import com.winlator.core.AppUtils;
 import com.winlator.core.FileUtils;
@@ -52,6 +53,13 @@ public class InputControlsManager {
 
     private void copyAssetProfilesIfNeeded() {
         File profilesDir = InputControlsManager.getProfilesDir(context);
+        if (BuildConfig.WRAPPER) {
+            // Single-game wrapper: no generic templates (RTS, FPS, gamepads). Profile 0 is still needed
+            // internally; the game's own layout is imported by the wrapper setup.
+            File file = ControlsProfile.getProfileFile(context, 0);
+            if (!file.isFile()) FileUtils.copy(context, "inputcontrols/profiles/controls-0.icp", file);
+            return;
+        }
         if (FileUtils.isEmpty(profilesDir)) {
             FileUtils.copy(context, "inputcontrols/profiles", profilesDir);
             return;

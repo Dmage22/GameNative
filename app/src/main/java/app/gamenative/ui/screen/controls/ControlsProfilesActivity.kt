@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.gamenative.BuildConfig
 import app.gamenative.R
 import app.gamenative.ui.theme.PluviaTheme
 import com.winlator.inputcontrols.ControlsProfile
@@ -105,7 +106,8 @@ private fun ControlsProfilesScreen(
         // Reload from disk: other screens (e.g. the editor's Duplicate) use their own manager instance.
         profiles = withContext(Dispatchers.IO) {
             manager.loadProfiles(true)
-            manager.getProfiles(true).toList()
+            // The wrapper hides the internal profile 0; players only see the game layout and their own.
+            manager.getProfiles(true).filter { !BuildConfig.WRAPPER || it.id != 0 }
         }
     }
 

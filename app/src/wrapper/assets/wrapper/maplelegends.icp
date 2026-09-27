@@ -1,10 +1,10 @@
 {
  "id": 1,
- "name": "MapleLegends",
+ "name": "Default",
  "cursorSpeed": 1,
  "elements": [
   {
-   "type": "D_PAD",
+   "type": "STICK",
    "shape": "CIRCLE",
    "bindings": [
     "KEY_UP",
@@ -12,8 +12,8 @@
     "KEY_DOWN",
     "KEY_LEFT"
    ],
-   "scale": 1.35,
-   "x": 0.17,
+   "scale": 1.4,
+   "x": 0.15,
    "y": 0.72,
    "toggleSwitch": false,
    "text": "",
@@ -29,8 +29,8 @@
     "NONE"
    ],
    "scale": 1.35,
-   "x": 0.87,
-   "y": 0.76,
+   "x": 0.92,
+   "y": 0.73,
    "toggleSwitch": false,
    "text": "ATK",
    "iconId": 0
@@ -44,9 +44,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 1.1,
-   "x": 0.94,
-   "y": 0.58,
+   "scale": 1.15,
+   "x": 0.82,
+   "y": 0.88,
    "toggleSwitch": false,
    "text": "JUMP",
    "iconId": 0
@@ -60,27 +60,11 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.9,
-   "x": 0.76,
-   "y": 0.88,
+   "scale": 0.85,
+   "x": 0.95,
+   "y": 0.5,
    "toggleSwitch": false,
    "text": "LOOT",
-   "iconId": 0
-  },
-  {
-   "type": "BUTTON",
-   "shape": "CIRCLE",
-   "bindings": [
-    "KEY_SPACE",
-    "NONE",
-    "NONE",
-    "NONE"
-   ],
-   "scale": 0.85,
-   "x": 0.77,
-   "y": 0.63,
-   "toggleSwitch": false,
-   "text": "NPC",
    "iconId": 0
   },
   {
@@ -92,9 +76,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.73,
-   "y": 0.08,
+   "scale": 0.62,
+   "x": 0.5,
+   "y": 0.8,
    "toggleSwitch": false,
    "text": "Shift",
    "iconId": 0
@@ -108,9 +92,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.8049999999999999,
-   "y": 0.08,
+   "scale": 0.62,
+   "x": 0.56,
+   "y": 0.8,
    "toggleSwitch": false,
    "text": "Ins",
    "iconId": 0
@@ -124,9 +108,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.88,
-   "y": 0.08,
+   "scale": 0.62,
+   "x": 0.62,
+   "y": 0.8,
    "toggleSwitch": false,
    "text": "Home",
    "iconId": 0
@@ -140,9 +124,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.955,
-   "y": 0.08,
+   "scale": 0.62,
+   "x": 0.6799999999999999,
+   "y": 0.8,
    "toggleSwitch": false,
    "text": "PgUp",
    "iconId": 0
@@ -156,9 +140,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.73,
-   "y": 0.2,
+   "scale": 0.62,
+   "x": 0.5,
+   "y": 0.92,
    "toggleSwitch": false,
    "text": "Del",
    "iconId": 0
@@ -172,9 +156,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.8049999999999999,
-   "y": 0.2,
+   "scale": 0.62,
+   "x": 0.56,
+   "y": 0.92,
    "toggleSwitch": false,
    "text": "End",
    "iconId": 0
@@ -188,11 +172,27 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.88,
-   "y": 0.2,
+   "scale": 0.62,
+   "x": 0.62,
+   "y": 0.92,
    "toggleSwitch": false,
    "text": "PgDn",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_SPACE",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.62,
+   "x": 0.6799999999999999,
+   "y": 0.92,
+   "toggleSwitch": false,
+   "text": "NPC",
    "iconId": 0
   },
   {
@@ -204,8 +204,8 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.62,
-   "x": 0.16,
+   "scale": 0.6,
+   "x": 0.14,
    "y": 0.07,
    "toggleSwitch": false,
    "text": "Items",
@@ -220,8 +220,8 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.62,
-   "x": 0.23,
+   "scale": 0.6,
+   "x": 0.21000000000000002,
    "y": 0.07,
    "toggleSwitch": false,
    "text": "Equip",
@@ -236,8 +236,8 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.62,
-   "x": 0.30000000000000004,
+   "scale": 0.6,
+   "x": 0.28,
    "y": 0.07,
    "toggleSwitch": false,
    "text": "Skills",
@@ -252,8 +252,8 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.62,
-   "x": 0.37,
+   "scale": 0.6,
+   "x": 0.35000000000000003,
    "y": 0.07,
    "toggleSwitch": false,
    "text": "Stats",
@@ -268,8 +268,8 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.62,
-   "x": 0.44000000000000006,
+   "scale": 0.6,
+   "x": 0.42000000000000004,
    "y": 0.07,
    "toggleSwitch": false,
    "text": "Quest",
@@ -284,8 +284,8 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.62,
-   "x": 0.51,
+   "scale": 0.6,
+   "x": 0.49000000000000005,
    "y": 0.07,
    "toggleSwitch": false,
    "text": "Map",
@@ -300,9 +300,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.4,
-   "y": 0.93,
+   "scale": 0.6,
+   "x": 0.8,
+   "y": 0.07,
    "toggleSwitch": false,
    "text": "Chat",
    "iconId": 0
@@ -316,9 +316,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.48,
-   "y": 0.93,
+   "scale": 0.6,
+   "x": 0.8700000000000001,
+   "y": 0.07,
    "toggleSwitch": false,
    "text": "Kbd",
    "iconId": 0
@@ -332,9 +332,9 @@
     "NONE",
     "NONE"
    ],
-   "scale": 0.7,
-   "x": 0.56,
-   "y": 0.93,
+   "scale": 0.6,
+   "x": 0.9400000000000001,
+   "y": 0.07,
    "toggleSwitch": false,
    "text": "Esc",
    "iconId": 0
