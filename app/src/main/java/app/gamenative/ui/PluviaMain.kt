@@ -1656,7 +1656,12 @@ fun PluviaMain(
                 composable(route = PluviaScreen.Wrapper.route) {
                     WrapperHomeScreen(
                         onStartGame = { appId ->
-                            // Single-game wrapper: no Steam, no cloud saves.
+                            // Single-game wrapper: no Steam, no cloud saves. Same launch state as the library's Play.
+                            viewModel.setLaunchedAppId(appId)
+                            viewModel.setBootToContainer(false)
+                            viewModel.setTestGraphics(false)
+                            viewModel.setDiagnostics(false)
+                            viewModel.setDebugRun(false)
                             viewModel.setOffline(true)
                             preLaunchApp(
                                 context = context,

@@ -24,6 +24,7 @@ object WrapperSetup {
     private const val STATE_PREFS = "wrapper_state"
     private const val KEY_GAME_FOLDER = "game_folder"
     private const val KEY_APP_ID = "app_id"
+    private const val KEY_COMPONENTS_FOR_UPDATE = "components_installed_for_update"
 
     // Written by the GPU / Display dialogs (WrapperSettings).
     private const val SETTINGS_PREFS = "wrapper_settings"
@@ -105,6 +106,11 @@ object WrapperSetup {
 
     private fun installComponents(context: Context, preset: WrapperPreset) {
         if (preset.components.isEmpty()) return
+        // Components only change with the APK, so install them once per app update.
+        val state = context.getSharedPreferences(STATE_PREFS, Context.MODE_PRIVATE)
+        val appUpdated = context.packageManager.getPackageInfo(context.packageName, 0).lastUpdateTime
+        if (state.getLong(KEY_COMPONENTS_FOR_UPDATE, 0L) == appUpdated) return
+
         val contentsManager = ContentsManager(context)
         for (name in preset.components) {
             val file = copyAsset(context, "wrapper/components/$name") ?: continue
@@ -120,6 +126,7 @@ object WrapperSetup {
             }
         }
         contentsManager.syncContents()
+        state.edit().putLong(KEY_COMPONENTS_FOR_UPDATE, appUpdated).apply()
     }
 
     private fun installContent(context: Context, contentsManager: ContentsManager, file: File, name: String) {
