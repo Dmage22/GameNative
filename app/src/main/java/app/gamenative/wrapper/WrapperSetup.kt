@@ -12,6 +12,7 @@ import com.winlator.contents.ContentsManager
 import com.winlator.core.WineRegistryEditor
 import com.winlator.core.envvars.EnvVars
 import com.winlator.fexcore.FEXCorePresetManager
+import com.winlator.inputcontrols.InputControlsManager
 import java.io.File
 import org.json.JSONObject
 import timber.log.Timber
@@ -25,6 +26,8 @@ object WrapperSetup {
     private const val KEY_GAME_FOLDER = "game_folder"
     private const val KEY_APP_ID = "app_id"
     private const val KEY_COMPONENTS_FOR_UPDATE = "components_installed_for_update"
+    private const val KEY_CONTROLS_IMPORTED = "controls_profile_imported"
+    private const val KEY_CONTROLS_PROFILE_ID = "controls_profile_id"
 
     // Written by the GPU / Display dialogs (WrapperSettings).
     private const val SETTINGS_PREFS = "wrapper_settings"
@@ -80,6 +83,7 @@ object WrapperSetup {
 
         onStatus("Installing components…")
         installComponents(context, preset)
+        ensureControlsProfile(context, preset)
 
         onStatus("Configuring…")
         val config = readAssetJson(context, preset.containerConfig)
@@ -159,6 +163,30 @@ object WrapperSetup {
             },
         )
     }
+
+    /** Imports the preset's controls profile once, so later user edits are kept. */
+    private fun ensureControlsProfile(context: Context, preset: WrapperPreset) {
+        if (preset.controlsProfile.isEmpty()) return
+        val state = context.getSharedPreferences(STATE_PREFS, Context.MODE_PRIVATE)
+        if (state.getBoolean(KEY_CONTROLS_IMPORTED, false)) return
+
+        try {
+            val json = context.assets.open("wrapper/${preset.controlsProfile}").bufferedReader().use {
+                JSONObject(it.readText())
+            }
+            val profile = InputControlsManager(context).importProfile(json) ?: return
+            state.edit()
+                .putBoolean(KEY_CONTROLS_IMPORTED, true)
+                .putInt(KEY_CONTROLS_PROFILE_ID, profile.id)
+                .apply()
+        } catch (e: Exception) {
+            Timber.e(e, "Wrapper: failed to import controls profile ${preset.controlsProfile}")
+        }
+    }
+
+    fun defaultControlsProfileId(context: Context): Int? =
+        context.getSharedPreferences(STATE_PREFS, Context.MODE_PRIVATE)
+            .getInt(KEY_CONTROLS_PROFILE_ID, -1).takeIf { it != -1 }
 
     /** Creates the preset's FEX preset once (matched by name) and returns its id. */
     private fun ensureFexPreset(context: Context, preset: WrapperPreset): String? {
