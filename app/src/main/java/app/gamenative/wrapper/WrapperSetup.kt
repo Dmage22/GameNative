@@ -64,6 +64,16 @@ object WrapperSetup {
     }
 
     /**
+     * Imports an already-extracted game folder (picked with the system folder picker, no permission) into
+     * the app's own storage and registers it. Blocking; call off the main thread.
+     */
+    fun importFolder(context: Context, preset: WrapperPreset, treeUri: Uri, onProgress: (Float) -> Unit): String {
+        val target = File(context.getExternalFilesDir(null), "game")
+        val gameDir = WrapperFolderImporter.import(context, treeUri, preset.install.exe, target, onProgress)
+        return registerGameFolder(context, preset, gameDir.absolutePath)
+    }
+
+    /**
      * Installs the game from the Mac `.pkg` the user downloaded into the app's own storage (no storage
      * permission needed) and registers it. Blocking; call off the main thread.
      */

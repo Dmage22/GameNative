@@ -58,6 +58,27 @@ fun WrapperHomeScreen(
     var installedVersion by remember { mutableIntStateOf(0) }
 
     var showSetup by remember { mutableStateOf(false) }
+    val folderImporter = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        val p = preset
+        if (uri != null && p != null) scope.launch {
+            busyMessage = "Copying… 0%"
+            val result = withContext(Dispatchers.IO) {
+                runCatching {
+                    WrapperSetup.importFolder(context, p, uri) { progress ->
+                        busyMessage = "Copying… ${(progress * 100).toInt()}%"
+                    }
+                }
+            }
+            busyMessage = null
+            result.onSuccess {
+                installedVersion++
+                SnackbarManager.show("${p.name} imported")
+            }.onFailure {
+                Timber.e(it, "Wrapper: folder import failed")
+                SnackbarManager.show(it.message ?: "Import failed")
+            }
+        }
+    }
     var showCredits by remember { mutableStateOf(false) }
     val pkgPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         val p = preset
@@ -239,14 +260,24 @@ fun WrapperHomeScreen(
         AlertDialog(
             onDismissRequest = { showSetup = false },
             title = { Text("Game files") },
-            text = { Text("Choose the ${preset?.name.orEmpty()} Mac .pkg you downloaded. It is unpacked into this app; the file itself is left untouched.") },
+            text = {
+                Text(
+                    "Choose the ${preset?.name.orEmpty()} Mac .pkg you downloaded, or a folder where the game is " +
+                        "already extracted. It is copied into this app; your file or folder is left untouched.",
+                )
+            },
             confirmButton = {
                 TextButton(onClick = {
                     showSetup = false
                     pkgPicker.launch(arrayOf("*/*"))
                 }) { Text("Choose .pkg") }
             },
-            dismissButton = { TextButton(onClick = { showSetup = false }) { Text("Cancel") } },
+            dismissButton = {
+                TextButton(onClick = {
+                    showSetup = false
+                    folderImporter.launch(null)
+                }) { Text("Import folder") }
+            },
         )
     }
 
