@@ -13,7 +13,7 @@
     "turnip_mrpurple_T30-toasted.adpkg.zip"
   ],
   "container": {},
-  "screenSize": "1280x1024",
+  "screenSize": "1366x768",
   "registry": [
     {
       "key": "Software\\Wine",

@@ -261,7 +261,7 @@ fun WrapperHomeScreen(
     }
     if (showDisplay) {
         WrapperDisplayDialog(
-            defaultSize = preset?.screenSize.orEmpty().ifEmpty { "1280x1024" },
+            defaultSize = preset?.screenSize.orEmpty().ifEmpty { "1366x768" },
             onDismiss = { showDisplay = false },
         )
     }
