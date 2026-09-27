@@ -1,5 +1,7 @@
 package app.gamenative.service
 
+import app.gamenative.BuildConfig
+
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -53,7 +55,7 @@ class NotificationHelper @Inject constructor(@ApplicationContext appContext: Con
     }
 
     private fun serviceNameFor(id: Int): String = when (id) {
-        NOTIFICATION_ID_STEAM -> "Steam"
+        NOTIFICATION_ID_STEAM -> if (BuildConfig.WRAPPER) context.getString(R.string.app_name) else "Steam"
         NOTIFICATION_ID_GOG -> "GOG"
         NOTIFICATION_ID_EPIC -> "Epic Games"
         NOTIFICATION_ID_AMAZON -> "Amazon Games"

@@ -2899,7 +2899,13 @@ fun XServerScreen(
             )
         }
 
-        QuickMenu(
+        // The single-game wrapper replaces the Quick Menu with its own column; kept outside this
+        // composable, which is at the dex register limit.
+        if (BuildConfig.WRAPPER) app.gamenative.wrapper.WrapperGameColumn(
+            menuRequested = showQuickMenu,
+            onMenuRequestHandled = dismissOverlayMenu,
+            onAction = onQuickMenuItemSelected,
+        ) else QuickMenu(
             isVisible = showQuickMenu,
             onDismiss = dismissOverlayMenu,
             onItemSelected = onQuickMenuItemSelected,

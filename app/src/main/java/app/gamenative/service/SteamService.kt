@@ -4148,7 +4148,9 @@ class SteamService : Service(), IChallengeUrlChanged {
             }
         }
 
-        if (!isRunning) {
+        // The single-game wrapper only uses this service to stay in the foreground while a game runs;
+        // it never talks to Steam.
+        if (!isRunning && !BuildConfig.WRAPPER) {
             Timber.i("Using server list path: $serverListPath")
 
             val configuration = SteamConfiguration.create {
