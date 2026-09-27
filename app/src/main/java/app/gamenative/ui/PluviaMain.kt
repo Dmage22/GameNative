@@ -107,6 +107,7 @@ import app.gamenative.ui.screen.login.UserLoginScreen
 import app.gamenative.ui.screen.settings.SettingsScreen
 import app.gamenative.ui.screen.xserver.XServerScreen
 import app.gamenative.ui.theme.PluviaTheme
+import app.gamenative.wrapper.WrapperBootSplash
 import app.gamenative.wrapper.WrapperHomeScreen
 import app.gamenative.ui.util.LocalSnackbarHostController
 import app.gamenative.ui.util.SnackbarManager
@@ -1594,13 +1595,21 @@ fun PluviaMain(
             }
 
             Box(modifier = Modifier.zIndex(10f)) {
-                BootingSplash(
-                    visible = state.showBootingSplash,
-                    text = state.bootingSplashText,
-                    heroImageUrl = state.bootingSplashHeroImageUrl,
-                    bootAd = state.bootAd,
-                    onAbort = { viewModel.abortBoot() },
-                )
+                if (BuildConfig.WRAPPER) {
+                    WrapperBootSplash(
+                        visible = state.showBootingSplash,
+                        text = state.bootingSplashText,
+                        onAbort = { viewModel.abortBoot() },
+                    )
+                } else {
+                    BootingSplash(
+                        visible = state.showBootingSplash,
+                        text = state.bootingSplashText,
+                        heroImageUrl = state.bootingSplashHeroImageUrl,
+                        bootAd = state.bootAd,
+                        onAbort = { viewModel.abortBoot() },
+                    )
+                }
             }
 
             // Connection status banner (overlay) - dismissible so users can access navigation

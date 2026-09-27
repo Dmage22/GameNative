@@ -21,6 +21,8 @@ data class WrapperPreset(
     val background: String = "",
     val containerConfig: String = "",
     val fexcorePreset: String = "",
+    /** Boot screen image (asset under wrapper/); falls back to [background]. */
+    val splash: String = "",
 )
 
 @Serializable
