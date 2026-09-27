@@ -1,0 +1,343 @@
+{
+ "id": 1,
+ "name": "MapleLegends",
+ "cursorSpeed": 1,
+ "elements": [
+  {
+   "type": "D_PAD",
+   "shape": "CIRCLE",
+   "bindings": [
+    "KEY_UP",
+    "KEY_RIGHT",
+    "KEY_DOWN",
+    "KEY_LEFT"
+   ],
+   "scale": 1.35,
+   "x": 0.17,
+   "y": 0.72,
+   "toggleSwitch": false,
+   "text": "",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "CIRCLE",
+   "bindings": [
+    "KEY_CTRL_L",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 1.35,
+   "x": 0.87,
+   "y": 0.76,
+   "toggleSwitch": false,
+   "text": "ATK",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "CIRCLE",
+   "bindings": [
+    "KEY_ALT_L",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 1.1,
+   "x": 0.94,
+   "y": 0.58,
+   "toggleSwitch": false,
+   "text": "JUMP",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "CIRCLE",
+   "bindings": [
+    "KEY_Z",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.9,
+   "x": 0.76,
+   "y": 0.88,
+   "toggleSwitch": false,
+   "text": "LOOT",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "CIRCLE",
+   "bindings": [
+    "KEY_SPACE",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.85,
+   "x": 0.77,
+   "y": 0.63,
+   "toggleSwitch": false,
+   "text": "NPC",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_SHIFT_L",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.73,
+   "y": 0.08,
+   "toggleSwitch": false,
+   "text": "Shift",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_INSERT",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.8049999999999999,
+   "y": 0.08,
+   "toggleSwitch": false,
+   "text": "Ins",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_HOME",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.88,
+   "y": 0.08,
+   "toggleSwitch": false,
+   "text": "Home",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_PG_UP",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.955,
+   "y": 0.08,
+   "toggleSwitch": false,
+   "text": "PgUp",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_DEL",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.73,
+   "y": 0.2,
+   "toggleSwitch": false,
+   "text": "Del",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_END",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.8049999999999999,
+   "y": 0.2,
+   "toggleSwitch": false,
+   "text": "End",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_PG_DOWN",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.88,
+   "y": 0.2,
+   "toggleSwitch": false,
+   "text": "PgDn",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_I",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.62,
+   "x": 0.16,
+   "y": 0.07,
+   "toggleSwitch": false,
+   "text": "Items",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_E",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.62,
+   "x": 0.23,
+   "y": 0.07,
+   "toggleSwitch": false,
+   "text": "Equip",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_K",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.62,
+   "x": 0.30000000000000004,
+   "y": 0.07,
+   "toggleSwitch": false,
+   "text": "Skills",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_S",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.62,
+   "x": 0.37,
+   "y": 0.07,
+   "toggleSwitch": false,
+   "text": "Stats",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_Q",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.62,
+   "x": 0.44000000000000006,
+   "y": 0.07,
+   "toggleSwitch": false,
+   "text": "Quest",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_W",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.62,
+   "x": 0.51,
+   "y": 0.07,
+   "toggleSwitch": false,
+   "text": "Map",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_ENTER",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.4,
+   "y": 0.93,
+   "toggleSwitch": false,
+   "text": "Chat",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "SHOW_KEYBOARD",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.48,
+   "y": 0.93,
+   "toggleSwitch": false,
+   "text": "Kbd",
+   "iconId": 0
+  },
+  {
+   "type": "BUTTON",
+   "shape": "ROUND_RECT",
+   "bindings": [
+    "KEY_ESC",
+    "NONE",
+    "NONE",
+    "NONE"
+   ],
+   "scale": 0.7,
+   "x": 0.56,
+   "y": 0.93,
+   "toggleSwitch": false,
+   "text": "Esc",
+   "iconId": 0
+  }
+ ]
+}

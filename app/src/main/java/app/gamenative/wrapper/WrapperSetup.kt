@@ -102,6 +102,7 @@ object WrapperSetup {
         fexPresetId?.let { container.setFEXCorePreset(it) }
         container.executablePath = preset.install.exe
         applyUserSettings(context, preset, container)
+        linkControlsProfile(context, container)
         container.saveData()
 
         applyRegistry(container, preset)
@@ -183,6 +184,19 @@ object WrapperSetup {
                 .apply()
         } catch (e: Exception) {
             Timber.e(e, "Wrapper: failed to import controls profile ${preset.controlsProfile}")
+        }
+    }
+
+    /**
+     * Points the container at the preset's layout unless the player picked another one. Without a
+     * profileId, GameNative copies its controller profile 0 on first launch.
+     */
+    private fun linkControlsProfile(context: Context, container: Container) {
+        val defaultId = defaultControlsProfileId(context) ?: return
+        val current = container.getExtra("profileId", "0").toIntOrNull() ?: 0
+        val manager = InputControlsManager(context)
+        if (current == 0 || manager.getProfile(current) == null) {
+            container.putExtra("profileId", defaultId.toString())
         }
     }
 

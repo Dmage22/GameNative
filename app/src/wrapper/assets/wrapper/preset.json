@@ -21,7 +21,7 @@
       "value": "win98"
     }
   ],
-  "controlsProfile": "",
+  "controlsProfile": "maplelegends.icp",
   "containerConfig": "container.json",
   "fexcorePreset": "fexcore-preset.json",
   "configFile": "Legends.ini",
