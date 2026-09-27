@@ -24,7 +24,7 @@
   "controlsProfile": "",
   "containerConfig": "container.json",
   "fexcorePreset": "fexcore-preset.json",
-  "configFile": "legends.ini",
+  "configFile": "Legends.ini",
   "background": "background.png",
   "credits": [
     {

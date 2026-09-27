@@ -60,7 +60,7 @@ the GL/Vulkan renderers).
 
 ## Home screen (user spec)
 Start game · GPU (driver choice) · Resolution (container screen size; must cover the in-game
-resolution, e.g. 1366x768) · legends.ini (opens the game's own config file in an in-app text
+resolution, e.g. 1366x768) · Legends.ini (opens the game's own config file in an in-app text
 editor, since the game folder may be app-private) · Controls.
 
 ## Preset files (MapleLegends)
