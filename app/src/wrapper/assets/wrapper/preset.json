@@ -25,5 +25,23 @@
   "containerConfig": "container.json",
   "fexcorePreset": "fexcore-preset.json",
   "configFile": "legends.ini",
-  "background": "background.png"
+  "background": "background.png",
+  "credits": [
+    {
+      "name": "MapleLegends",
+      "detail": "The game and server, run by the MapleLegends team. Logo and icon used with their art."
+    },
+    {
+      "name": "MapleStory",
+      "detail": "Original game by Nexon. MapleStory is a trademark of Nexon."
+    },
+    {
+      "name": "Turnip T30 by Mr_Purple_666",
+      "detail": "Adreno Vulkan driver build (Mesa, MIT license), thanks to DiskDVD and testers. github.com/MrPurple666/purple-turnip"
+    },
+    {
+      "name": "DXVK-GPLASYNC package by Arihany",
+      "detail": "WinlatorWCPHub package of DXVK 2.7.1 with the gplasync patch."
+    }
+  ]
 }

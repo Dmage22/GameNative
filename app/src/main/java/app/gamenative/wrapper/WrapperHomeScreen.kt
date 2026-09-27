@@ -61,6 +61,7 @@ fun WrapperHomeScreen(
     var installedVersion by remember { mutableIntStateOf(0) }
 
     var showSetup by remember { mutableStateOf(false) }
+    var showCredits by remember { mutableStateOf(false) }
     val pkgPicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         val p = preset
         if (uri != null && p != null) scope.launch {
@@ -216,6 +217,19 @@ fun WrapperHomeScreen(
                 }
             }
         }
+
+        TextButton(
+            onClick = { showCredits = true },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(4.dp),
+        ) {
+            Text("Credits", style = MaterialTheme.typography.labelSmall, color = Color.White.copy(alpha = 0.6f))
+        }
+    }
+
+    if (showCredits) {
+        WrapperCreditsDialog(preset = preset, onDismiss = { showCredits = false })
     }
 
     editingConfig?.let { file ->

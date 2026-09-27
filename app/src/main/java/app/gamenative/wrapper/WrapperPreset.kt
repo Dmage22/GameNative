@@ -23,6 +23,13 @@ data class WrapperPreset(
     val fexcorePreset: String = "",
     /** Boot screen image (asset under wrapper/); falls back to [background]. */
     val splash: String = "",
+    val credits: List<WrapperCredit> = emptyList(),
+)
+
+@Serializable
+data class WrapperCredit(
+    val name: String,
+    val detail: String = "",
 )
 
 @Serializable
