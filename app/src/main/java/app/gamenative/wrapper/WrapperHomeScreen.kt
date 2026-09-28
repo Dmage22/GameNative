@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -225,21 +226,20 @@ fun WrapperHomeScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 16.dp),
         ) {
-            // Two buttons per row; a lone last button keeps the same width as the others.
+            // Two compact buttons per row, centred; they size to their label (with a small minimum width).
             smallButtons.chunked(2).forEach { row ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
                 ) {
                     row.forEach { (label, enabled, onClick) ->
                         WrapperSmallButton(
                             text = label,
                             enabled = enabled && busyMessage == null,
                             onClick = onClick,
-                            modifier = Modifier.weight(1f),
+                            modifier = Modifier.widthIn(min = 124.dp),
                         )
                     }
-                    if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
                 }
             }
         }
@@ -308,9 +308,10 @@ private fun WrapperSmallButton(
     OutlinedButton(
         onClick = onClick,
         enabled = enabled,
+        contentPadding = PaddingValues(horizontal = 16.dp),
         modifier = modifier
-            .padding(vertical = 6.dp)
-            .height(44.dp),
+            .padding(vertical = 4.dp)
+            .height(40.dp),
     ) {
         Text(text = text, style = MaterialTheme.typography.labelLarge, maxLines = 1)
     }
