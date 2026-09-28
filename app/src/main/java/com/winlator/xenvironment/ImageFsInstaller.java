@@ -210,8 +210,9 @@ public abstract class ImageFsInstaller {
 
         ensureBionicLib(ctx, imagefs);
 
-        // Extract extras.tzst - download from server for modern variant, use bundled assets for legacy
-        if (app.gamenative.BuildConfig.MODERN_ANDROID) {
+        // Extract extras.tzst - download from server for modern variant, use bundled assets for legacy.
+        // The single-game wrapper bundles it in every variant so it never downloads anything.
+        if (app.gamenative.BuildConfig.MODERN_ANDROID && !app.gamenative.BuildConfig.WRAPPER) {
             try {
                 // Modern variant: download and extract
                 java.io.File extrasFile = ContainerFilesDownloaderKt.ensureContainerFileAvailableBlocking(

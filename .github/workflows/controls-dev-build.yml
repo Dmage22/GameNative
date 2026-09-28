@@ -17,6 +17,9 @@ jobs:
     env:
       BUILD_VARIANT: ${{ github.ref_name == 'wrapper' && 'wrapper' || 'controlsdev' }}
       BUILD_VARIANT_CAP: ${{ github.ref_name == 'wrapper' && 'Wrapper' || 'Controlsdev' }}
+      # The wrapper uses the modern flavor (targetSdk 36: no automatic notification prompt, no broad storage access).
+      FLAVOR: ${{ github.ref_name == 'wrapper' && 'modern' || 'legacy' }}
+      FLAVOR_CAP: ${{ github.ref_name == 'wrapper' && 'Modern' || 'Legacy' }}
 
     steps:
     - name: Free disk space
@@ -73,10 +76,12 @@ jobs:
         fetch fexcore-2609-maple1.wcp https://github.com/Dmage22/FEX-D2/releases/download/fexcore-2609-maple1-27/fexcore-2609-maple1.wcp
         fetch dxvk-gplasync-2.7.1-1.wcp https://github.com/Dmage22/wrapper-components/releases/download/dxvk-gplasync-2.7.1-1/dxvk-gplasync-2.7.1-1.wcp
         echo "e905591a6abd56d9a51f983c294a57cbde1698e4a9be943a5e05228c9768b127  $dir/dxvk-gplasync-2.7.1-1.wcp" | sha256sum -c -
+        # extras.tzst is bundled only in the legacy flavor; the modern-flavor wrapper ships it too.
+        cp app/src/legacy/assets/extras.tzst app/src/wrapper/assets/extras.tzst
         fetch turnip_mrpurple_T30-toasted.adpkg.zip https://github.com/MrPurple666/purple-turnip/releases/download/vturnip_mrpurple_T30-toasted.adpkg/turnip_mrpurple_T30-toasted.adpkg.zip
 
     - name: Build with Gradle
-      run: ./gradlew :app:bundleLegacy${{ env.BUILD_VARIANT_CAP }}
+      run: ./gradlew :app:bundle${{ env.FLAVOR_CAP }}${{ env.BUILD_VARIANT_CAP }}
 
     - name: Stop Gradle daemons
       run: ./gradlew --stop
@@ -84,7 +89,7 @@ jobs:
     - name: Extract universal APK
       run: |
         java -Xmx3g -jar tools/bundletool-all-1.17.2.jar build-apks \
-          --bundle=app/build/outputs/bundle/legacy${{ env.BUILD_VARIANT_CAP }}/app-legacy-${{ env.BUILD_VARIANT }}.aab \
+          --bundle=app/build/outputs/bundle/${{ env.FLAVOR }}${{ env.BUILD_VARIANT_CAP }}/app-${{ env.FLAVOR }}-${{ env.BUILD_VARIANT }}.aab \
           --output=controlsdev.apks --mode=universal \
           --ks="$HOME/.android/debug.keystore" --ks-pass=pass:android --ks-key-alias=androiddebugkey --key-pass=pass:android
         unzip -p controlsdev.apks universal.apk > gamenative-${{ env.BUILD_VARIANT }}.apk

@@ -207,14 +207,15 @@ fun WrapperHomeScreen(
         val openControls = {
             context.startActivity(ControlsProfilesActivity.intent(context))
         }
-        val smallButtons = buildList<Pair<String, () -> Unit>> {
-            add("Game files" to { showSetup = true })
-            add("Setup" to runSetup)
-            add("Controls" to openControls)
-            add("GPU" to { showGpu = true })
-            add("Display" to { showDisplay = true })
+        // Label, enabled, action. GPU/Display need Setup (the container); the config file needs the game files.
+        val smallButtons = buildList<Triple<String, Boolean, () -> Unit>> {
+            add(Triple("Game files", true) { showSetup = true })
+            add(Triple("Setup", true, runSetup))
+            add(Triple("Controls", true, openControls))
+            add(Triple("GPU", ready) { showGpu = true })
+            add(Triple("Display", ready) { showDisplay = true })
             if (preset.configFile.isNotEmpty()) {
-                add(preset.configFile to { editingConfig = File(gameDir, preset.configFile) })
+                add(Triple(preset.configFile, installed) { editingConfig = File(gameDir, preset.configFile) })
             }
         }
         Column(
@@ -230,8 +231,13 @@ fun WrapperHomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    row.forEach { (label, onClick) ->
-                        WrapperSmallButton(text = label, onClick = onClick, modifier = Modifier.weight(1f))
+                    row.forEach { (label, enabled, onClick) ->
+                        WrapperSmallButton(
+                            text = label,
+                            enabled = enabled && busyMessage == null,
+                            onClick = onClick,
+                            modifier = Modifier.weight(1f),
+                        )
                     }
                     if (row.size == 1) Spacer(modifier = Modifier.weight(1f))
                 }
@@ -297,9 +303,11 @@ private fun WrapperSmallButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     OutlinedButton(
         onClick = onClick,
+        enabled = enabled,
         modifier = modifier
             .padding(vertical = 6.dp)
             .height(44.dp),

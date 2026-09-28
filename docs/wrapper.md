@@ -110,5 +110,9 @@ editor, since the game folder may be app-private) · Controls.
   covers that. Keep this behaviour.
 
 ## Permissions
+The wrapper builds on the **modern** flavor (targetSdk 36): legacy (targetSdk 28) makes Android 13+ show the
+notification prompt by itself when the first notification channel is created. The modern installer would
+download extras.tzst from GameNative's server, so CI copies the legacy bundled copy into the wrapper assets and
+ImageFsInstaller uses it for WRAPPER builds.
 The wrapper asks for none: no All-files access (removed in app/src/wrapper/AndroidManifest.xml) and no
 notification prompt (MainActivity skips it for WRAPPER builds).
