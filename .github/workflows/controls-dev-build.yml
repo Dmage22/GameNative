@@ -76,9 +76,8 @@ jobs:
         fetch fexcore-2609-maple1.wcp https://github.com/Dmage22/FEX-D2/releases/download/fexcore-2609-maple1-27/fexcore-2609-maple1.wcp
         fetch dxvk-gplasync-2.7.1-1.wcp https://github.com/Dmage22/wrapper-components/releases/download/dxvk-gplasync-2.7.1-1/dxvk-gplasync-2.7.1-1.wcp
         echo "e905591a6abd56d9a51f983c294a57cbde1698e4a9be943a5e05228c9768b127  $dir/dxvk-gplasync-2.7.1-1.wcp" | sha256sum -c -
-        # extras and the container templates (new containers start from the built-in Wine template) are bundled only in the legacy flavor; the modern-flavor wrapper ships them too.
-        cp app/src/legacy/assets/extras.tzst app/src/legacy/assets/container_pattern_common.tzst \
-          app/src/legacy/assets/container_pattern_gamenative.tzst app/src/wrapper/assets/
+        # extras and the common container template are bundled only in the legacy flavor; the modern-flavor wrapper ships them too.
+        cp app/src/legacy/assets/extras.tzst app/src/legacy/assets/container_pattern_common.tzst app/src/wrapper/assets/
         fetch turnip_mrpurple_T30-toasted.adpkg.zip https://github.com/MrPurple666/purple-turnip/releases/download/vturnip_mrpurple_T30-toasted.adpkg/turnip_mrpurple_T30-toasted.adpkg.zip
 
     - name: Build with Gradle
