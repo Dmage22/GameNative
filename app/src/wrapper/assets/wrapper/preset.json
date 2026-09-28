@@ -43,5 +43,11 @@
       "name": "DXVK-GPLASYNC package by Arihany",
       "detail": "WinlatorWCPHub package of DXVK 2.7.1 with the gplasync patch."
     }
-  ]
+  ],
+  "baseImage": {
+    "file": "imagefs_bionic.txz",
+    "url": "https://github.com/Dmage22/wrapper-components/releases/download/imagefs-bionic-20251012/imagefs_bionic.txz",
+    "sha256": "368db62bfc58b72c97e5169bda9aa64d4246f07964c447e27c79a065e7e9c48b",
+    "size": 183506500
+  }
 }

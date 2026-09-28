@@ -109,6 +109,11 @@ editor, since the game folder may be app-private) · Controls.
   hideInputControls; flag hasUpdatedScreenGamepad). They don't come back on unplug - the show/hide tool
   covers that. Keep this behaviour.
 
+## Base system image
+GameNative never bundles imagefs_bionic.txz (183.5 MB); it downloads it on first launch. The wrapper's Setup
+downloads it instead from our mirror (Dmage22/wrapper-components, release imagefs-bionic-20251012; URL and
+SHA-256 in preset.json `baseImage`), verifies it, installs it, and deletes the archive.
+
 ## Permissions
 The wrapper builds on the **modern** flavor (targetSdk 36): legacy (targetSdk 28) makes Android 13+ show the
 notification prompt by itself when the first notification channel is created. The modern installer would

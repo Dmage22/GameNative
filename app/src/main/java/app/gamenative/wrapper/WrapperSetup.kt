@@ -118,12 +118,19 @@ object WrapperSetup {
             wineVersion = defaults.wineVersion
             containerVariant = defaults.containerVariant
         }
+        val imageFs = ImageFs.find(context)
+        val imageReady = imageFs.isValid() && imageFs.getVersion() >= ImageFsInstaller.LATEST_VERSION &&
+            imageFs.getVariant() == defaults.containerVariant
+        val archive = preset.baseImage?.let { File(imageFs.filesDir, it.file) }
+        if (!imageReady && preset.baseImage != null && archive != null) downloadVerified(preset.baseImage, archive, onStatus)
+
         onStatus("Installing base system… 0%")
         val ok = ImageFsInstaller.installIfNeededFuture(context, context.assets, imageTarget) { percent ->
             onStatus("Installing base system… $percent%")
         }.get()
         if (!ok) throw IllegalStateException("Base system installation failed")
-        ImageFs.find(context).createVariantFile(defaults.containerVariant)
+        imageFs.createVariantFile(defaults.containerVariant)
+        archive?.delete() // app-internal download, no longer needed once extracted
 
         // New containers are created from the defaults, so set them first: the Wine prefix is
         // extracted for the container's wineVersion at creation time.
@@ -157,6 +164,62 @@ object WrapperSetup {
         linkControlsProfile(context, container)
         container.saveData()
         return appId
+    }
+
+    /** Downloads [download] to [dest] with progress, verifying size and SHA-256; keeps a verified copy. */
+    private fun downloadVerified(download: WrapperDownload, dest: File, onStatus: (String) -> Unit) {
+        if (dest.isFile && (download.size < 0 || dest.length() == download.size) && sha256(dest) == download.sha256) return
+        dest.parentFile?.mkdirs()
+        val part = File(dest.path + ".part")
+        val connection = (java.net.URL(download.url).openConnection() as java.net.HttpURLConnection).apply {
+            connectTimeout = 20_000
+            readTimeout = 60_000
+            instanceFollowRedirects = true
+        }
+        try {
+            if (connection.responseCode != 200) throw java.io.IOException("Download failed (HTTP ${connection.responseCode})")
+            val total = connection.contentLengthLong.takeIf { it > 0 } ?: download.size
+            var lastPercent = -1
+            connection.inputStream.use { input ->
+                part.outputStream().use { output ->
+                    val buffer = ByteArray(256 * 1024)
+                    var done = 0L
+                    while (true) {
+                        val read = input.read(buffer)
+                        if (read < 0) break
+                        output.write(buffer, 0, read)
+                        done += read
+                        val percent = if (total > 0) (done * 100 / total).toInt() else -1
+                        if (percent != lastPercent) {
+                            lastPercent = percent
+                            onStatus(if (percent >= 0) "Downloading base system… $percent%" else "Downloading base system…")
+                        }
+                    }
+                }
+            }
+        } finally {
+            connection.disconnect()
+        }
+        onStatus("Verifying download…")
+        if (sha256(part) != download.sha256) {
+            part.delete()
+            throw java.io.IOException("Download was corrupted - please try Setup again")
+        }
+        dest.delete()
+        if (!part.renameTo(dest)) throw java.io.IOException("Could not save the download")
+    }
+
+    private fun sha256(file: File): String {
+        val digest = java.security.MessageDigest.getInstance("SHA-256")
+        file.inputStream().use { input ->
+            val buffer = ByteArray(1024 * 1024)
+            while (true) {
+                val read = input.read(buffer)
+                if (read < 0) break
+                digest.update(buffer, 0, read)
+            }
+        }
+        return digest.digest().joinToString("") { "%02x".format(it) }
     }
 
     private fun appUpdateTime(context: Context): Long =

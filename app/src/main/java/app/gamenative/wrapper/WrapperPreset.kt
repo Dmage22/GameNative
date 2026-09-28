@@ -24,6 +24,16 @@ data class WrapperPreset(
     /** Boot screen image (asset under wrapper/); falls back to [background]. */
     val splash: String = "",
     val credits: List<WrapperCredit> = emptyList(),
+    /** Base system image downloaded during Setup (not bundled, to keep the APK small). */
+    val baseImage: WrapperDownload? = null,
+)
+
+@Serializable
+data class WrapperDownload(
+    val file: String,
+    val url: String,
+    val sha256: String,
+    val size: Long = -1,
 )
 
 @Serializable
