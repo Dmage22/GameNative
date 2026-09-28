@@ -108,10 +108,27 @@ object WrapperSetup {
         val config = readAssetJson(context, preset.containerConfig)
         val fexPresetId = ensureFexPreset(context, preset)
 
+        // Base system image first: a custom Proton's prefix is unpacked from imagefs/opt/<version>, which
+        // only exists once the image is installed, so creating the container earlier fails on a fresh install.
+        // The installer only reads the Wine version and variant, so a temporary container object is enough.
+        // GameNative only writes the variant marker when a game boots, so write it here too, otherwise the
+        // first launch would install the image again.
+        val defaults = defaultsFrom(config, fexPresetId)
+        val imageTarget = Container(appId).apply {
+            wineVersion = defaults.wineVersion
+            containerVariant = defaults.containerVariant
+        }
+        onStatus("Installing base system… 0%")
+        val ok = ImageFsInstaller.installIfNeededFuture(context, context.assets, imageTarget) { percent ->
+            onStatus("Installing base system… $percent%")
+        }.get()
+        if (!ok) throw IllegalStateException("Base system installation failed")
+        ImageFs.find(context).createVariantFile(defaults.containerVariant)
+
         // New containers are created from the defaults, so set them first: the Wine prefix is
         // extracted for the container's wineVersion at creation time.
         if (!ContainerUtils.hasContainer(context, appId)) {
-            ContainerUtils.setDefaultContainerData(defaultsFrom(config, fexPresetId))
+            ContainerUtils.setDefaultContainerData(defaults)
         }
         val container = ContainerUtils.getOrCreateContainer(context, appId)
 
@@ -125,14 +142,6 @@ object WrapperSetup {
         container.saveData()
         applyRegistry(container, preset)
 
-        // Base system image. GameNative only writes the variant marker when a game boots, so write it
-        // here too, otherwise the first launch would install the image again.
-        onStatus("Installing base system… 0%")
-        val ok = ImageFsInstaller.installIfNeededFuture(context, context.assets, container) { percent ->
-            onStatus("Installing base system… $percent%")
-        }.get()
-        if (!ok) throw IllegalStateException("Base system installation failed")
-        ImageFs.find(context).createVariantFile(container.containerVariant)
 
         context.getSharedPreferences(STATE_PREFS, Context.MODE_PRIVATE).edit()
             .putLong(KEY_ENV_READY_FOR_UPDATE, appUpdateTime(context))
