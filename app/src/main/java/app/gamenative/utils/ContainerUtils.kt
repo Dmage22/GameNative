@@ -785,12 +785,6 @@ object ContainerUtils {
         // Set up data for container creation
         val data = JSONObject()
         data.put("name", "container_$containerId")
-        if (BuildConfig.WRAPPER) {
-            // Create the prefix straight from the configured Proton instead of the built-in Wine
-            // template followed by a switch; the wrapper doesn't ship that template.
-            data.put("wineVersion", PrefManager.wineVersion)
-            data.put("containerVariant", PrefManager.containerVariant)
-        }
 
         // Create the actual container
         var container = containerManager.createContainerFuture(containerId, data).get()
