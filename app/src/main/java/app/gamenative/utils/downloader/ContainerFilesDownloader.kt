@@ -75,8 +75,8 @@ object ContainerFilesDownloader {
         val component = manifest.components.find { it.id == componentId }
             ?: throw Exception("Container file $componentId not found in $CONTAINER_FILES_MANIFEST_FILE")
 
-        // Legacy variant: use bundled assets
-        if (!BuildConfig.MODERN_ANDROID) {
+        // Legacy variant (and the single-game wrapper, which bundles them): use bundled assets
+        if (!BuildConfig.MODERN_ANDROID || BuildConfig.WRAPPER) {
             Timber.d("Legacy variant: Container file $componentId will be extracted from bundled assets")
             return@withContext null
         }
@@ -152,8 +152,8 @@ object ContainerFilesDownloader {
      * Safe to call on app startup - runs in background and doesn't block.
      */
     suspend fun preloadAllContainerFiles(context: Context) = withContext(Dispatchers.IO) {
-        if (!BuildConfig.MODERN_ANDROID) {
-            Timber.d("Legacy variant: Skipping container files preload (using bundled assets)")
+        if (!BuildConfig.MODERN_ANDROID || BuildConfig.WRAPPER) {
+            Timber.d("Legacy variant / wrapper: Skipping container files preload (using bundled assets)")
             return@withContext
         }
 

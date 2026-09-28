@@ -27,7 +27,7 @@
   "wow64Mode": true,
   "startupSelection": 1,
   "box86Version": "0.3.2",
-  "box64Version": "0.4.4-1",
+  "box64Version": "0.4.2",
   "box86Preset": "COMPATIBILITY",
   "box64Preset": "COMPATIBILITY",
   "desktopTheme": "LIGHT,IMAGE,#0277bd",

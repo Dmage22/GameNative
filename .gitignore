@@ -74,3 +74,4 @@ app/src/main/cpp/steambootstrap/steam_bootstrap.c
 app/src/main/cpp/third_party/SDL2/
 app/src/wrapper/assets/wrapper/components/
 app/src/wrapper/assets/extras.tzst
+app/src/wrapper/assets/container_pattern_common.tzst
